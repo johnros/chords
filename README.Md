@@ -11,5 +11,5 @@ Installation
 -------------
 ```{r}
 library(devtools)
-install_github("chords", "johnros")
-library(chords)
+install_github("chords", "johnros", subdir='pkg/chords')
+library(selectiveCI)
