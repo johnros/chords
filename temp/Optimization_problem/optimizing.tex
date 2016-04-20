@@ -1,0 +1,62 @@
+\documentclass[12pt,a4paper,draft]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{bm}
+
+
+\begin{document}
+The log likelihood:
+\begin{align*}
+	l(\bm{\beta},\bm{N}; \bm{t}) &=
+	\sum_{t_i \in \bm t} \sum_{j=1}^\infty \left[
+		I\{ x_{t_i} = j \} \log(\lambda_{j,t_i}) -
+		\lambda_{j,t_i} \Delta_i
+	\right]	
+\end{align*}
+
+where 
+\begin{align*}
+	\lambda_{j,t_i} &:= \beta_j I_{t_i} (N_j-n_{j,t_i}) \\
+	\Delta_i &:= t_i - t_{i-1}. 
+\end{align*}
+
+By differentiating w.r.t. $N_k$:
+\begin{align}\label{eq:Nk_FOC}
+\begin{split}
+	\sum_{t_i:x_{t_i}=k} \frac{1}{N_k - n_{k,t_i}} &= A_k \beta_k \\
+	A_k &:= \sum_{t_i \in \bm t} I_{t_i} \Delta_i
+\end{split}
+\end{align}
+
+By differentiating w.r.t. $\beta_k$
+\begin{align}\label{eq:beta_FOC}
+\begin{split}
+	n_k &= \beta_k [ N_k A_k- B ] \\
+	n_k &:= \sum_{t_i:x_{t_i}=k} 1 \\
+	B_k &:= \sum_{t_i \in \bm t} I_{t_i} \, n_{k,t_i} \, \Delta_i.
+\end{split}
+\end{align}
+
+Solving for $\beta_k$ and plugging in Eq.\ref{eq:Nk_FOC}
+\begin{align}\label{eq:partial_likelihood}
+\begin{split}
+	\left( N_k-\frac{B_k}{A_k} \right) 
+	\left( \sum_{t_i:x_{t_i}=k}\frac{1}{N_k - n_{k,t_i}}\right) - n_{k}=0
+\end{split}
+\end{align}
+
+It thus remains to find the root(s) of Eq.\ref{eq:partial_likelihood} to find $\hat{N}_k$ and plug it in Eq~\ref{eq:beta_FOC} to find $\hat{\beta}_k$.
+
+\hrulefill
+\bigskip
+
+Now adding some regularization via Jefrey's prior...
+
+
+
+
+
+\end{document}

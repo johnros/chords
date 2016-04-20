@@ -1,0 +1,23 @@
+---
+title: "Manual Likelihood"
+author: "Jonathan Rosenblatt"
+date: "17/08/2014"
+output: pdf_document
+---
+
+# The likelihood of the sample `c(3,2,2,2)`:
+Let $$
+(t_1,\dots,t_4) = c\left(0, \,\frac{1}{9}, \,\frac{1}{9}+\frac{1}{16}, \,\frac{1}{9}+\frac{1}{16}+\frac{1}{21} \right).$$
+
+Defining $\lambda_{j,t}:=\beta_0 *j^\theta (N_j-n_{j,t}) \, I_t$, and setting 
+$N_2=10$,
+$\beta_0=1$,  
+and $\theta=1$, we have
+\begin{align*}
+  l(3,2,2,2) &= \log \lambda_{2,t_2} - \frac{1}{9}(\lambda_{2,t_2}) + \\
+  &{} \log \lambda_{2,t_3} - \frac{1}{16}(\lambda_{2,t_3}) + \\
+  &{} \log \lambda_{2,t_4} - \frac{1}{21}(\lambda_{2,t_4}) + \\
+  {}&=  3.6925
+\end{align*}
+
+

@@ -1,0 +1,8 @@
+chords-package	rds2-package
+brazil	brazil
+chords	rds2-package
+estimate.b.k	estimate.b.k
+getTheta	getTheta
+initializeRdsObject	initializeRdsObject
+makeRdsSample	makeRdsSample
+thetaSmoothingNks	thetaSmoothingNks

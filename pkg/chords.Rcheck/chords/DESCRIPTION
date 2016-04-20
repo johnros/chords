@@ -1,0 +1,14 @@
+Package: chords
+Type: Package
+Title: Estimation in respondent driven samples.
+Version: 0.92.5
+Date: 2016-04-20
+Author: Jonathan Rosenblatt
+Maintainer: Jonathan Rosenblatt <john.ros@gmail.com>
+Description: Maximum likelihood estimation in respondent driven samples.
+License: GPL-2
+Imports: MASS
+Suggests: Matrix
+NeedsCompilation: no
+Packaged: 2016-04-20 09:29:28 UTC; johnros
+Built: R 3.2.5; ; 2016-04-20 09:29:29 UTC; unix

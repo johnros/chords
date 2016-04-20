@@ -1,0 +1,8 @@
+brazil                  Heavy Drug Users in Curitiba
+chords-package          Population size estimation for respondent
+                        driven sampling
+estimate.b.k            Estimate population size from RDS sample
+getTheta                Recover the "discoverability coefficient".
+initializeRdsObject     Construct a 'rds-object' from a data.frame.
+makeRdsSample           Generate a synthetic (simulated) RDS sample.
+thetaSmoothingNks       Smooth estimates degree frequencies.
