@@ -11,5 +11,5 @@ Installation
 -------------
 ```{r}
 library(devtools)
-install_github("chords", "johnros", subdir='pkg/chords')
+install_github("johnros/chords", subdir='pkg/chords')
 library(chords)
