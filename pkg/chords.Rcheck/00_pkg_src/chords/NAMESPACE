@@ -1,7 +1,0 @@
-export(initializeRdsObject)
-export(estimate.b.k)
-export(getTheta)
-export(makeRdsSample)
-export(thetaSmoothingNks)
-import(MASS)
-
