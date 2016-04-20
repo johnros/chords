@@ -12,4 +12,4 @@ Installation
 ```{r}
 library(devtools)
 install_github("chords", "johnros", subdir='pkg/chords')
-library(selectiveCI)
+library(chords)
