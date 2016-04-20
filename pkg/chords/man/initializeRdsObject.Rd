@@ -56,9 +56,6 @@ A list with the following components.
 \references{
   [1] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.
 }
-\author{
-  Jonathan D. Rosenblatt \email{john.ros.work@gmail.com}
-}
 
 \seealso{
   \code{\link{estimate.b.k}}, \code{\link{makeRdsSample}}, \code{\link{brazil}}

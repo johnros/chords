@@ -69,7 +69,7 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, regularize=FALSE,
 # estimate beta_k from sampled degrees and snowball matrix:
 estimate.b.k<- function (rds.object, 
                          const=1,
-                         impute.Nks='jeff',
+                         impute.Nks=FALSE,
                          silent=TRUE) {
   ### Sketch:
   # Generate estimable parameters vector.

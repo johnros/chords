@@ -11,7 +11,8 @@ The underlying idea is that the sample spreads like an epidemic in the target po
 \usage{
   estimate.b.k(rds.object, 
   const=1,
-  impute.Nks=TRUE)
+  impute.Nks=FALSE,
+  silent=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -20,6 +21,7 @@ The underlying idea is that the sample spreads like an epidemic in the target po
 }
 \item{const}{A scaler value for numerical stability. Should not be altered.}
 \item{impute.Nks}{Should inestimable values be imputed?}
+\item{silent}{For debugging purposes.}
 }
 
 \details{
@@ -47,10 +49,6 @@ A list with the following components:
 \references{
   [1] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.
   }
-
-\author{
-  Jonathan D. Rosenblatt \email{john.ros.work@gmail.com}
-}
 
 \seealso{
   \code{\link{initializeRdsObject}}, \code{\link{makeRdsSample}}, \code{\link{getTheta}}

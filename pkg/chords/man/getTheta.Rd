@@ -36,9 +36,6 @@ A list including the following components:
   [2] Bloomfield, P., K.S. Deffeyes, B. Silverman, G.S. Watson, Y. Benjamini, and R.A. Stine. Volume and Area of Oil Fields and Their Impact on Order of Discovery, 1980. http://www.osti.gov/scitech/servlets/purl/6037591.
 }
 
-\author{
-  Jonathan D. Rosenblatt \email{john.ros.work@gmail.com}
-}
 
 
 \seealso{

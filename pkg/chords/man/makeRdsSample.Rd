@@ -31,9 +31,6 @@ makeRdsSample(N.k, b.k, sample.length)
 \references{
   [1] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.}
 
-\author{
-  Jonathan D. Rosenblatt \email{john.ros.work@gmail.com}
-}
 
 \note{
  The simulator does not prodice a whole RDS sample, but rather the sufficient statistics required for applying \code{\link{estimate.b.k}}.
