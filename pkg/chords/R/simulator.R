@@ -35,14 +35,16 @@ makeRdsSample <- function (N.k, b.k, sample.length) {
   n.ks <- rep(0, length(N.k))
   event.time <- 0
   I.t <- 1
+  # Construct null object
   rds.object.simulated <- rdsObjectConstructor(
     rds.sample = data.frame(NS1=rep(NA, sample.length), interviewDt=rep(NA, sample.length)),
     I.t = rep(NA, sample.length),
     degree.in = rep(0, sample.length),
     degree.out = rep(0, sample.length))
+  
+  # Populate object with RDS sample.
   for(period in seq_len(sample.length)){
     lambda.k <- updateLambdas(N.k, n.ks, b.k, I.t)
-    ## FIXME: floating point errors when summing rate?
     time.to.event <- rexp(1, sum(lambda.k))
     event.time <- event.time + time.to.event
     rds.object.simulated$rds.sample$interviewDt[period] <- event.time
@@ -139,7 +141,7 @@ makeSparseMatrix <- function(mean, pop.size, weight.range){
 
 
 makeWeightMatrix <- function(means, pop.size){
-  library(Matrix)
+  requireNamespace()(Matrix)
   
   weak.mean <- means['weak']
   strong.mean <- means['strong']

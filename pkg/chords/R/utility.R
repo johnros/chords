@@ -31,8 +31,24 @@ findRecruiter <- function(active.coupons, coupon){
 # findRecruiter(active.coupons, coupon)
 
 
-
-
+makeRDSExample <- function(){
+  dk <- c(2, 1e1) # unique degree classes
+  true.dks <- rep(0,max(dk)); true.dks[dk] <- dk
+  true.Nks <- rep(0,max(dk)); true.Nks[dk] <- 1e3
+  beta <- 1 #5e-6
+  theta <-  0.1
+  true.log.bks <- rep(-Inf, max(dk))
+  true.log.bks[dk] <- theta*log(beta*dk)
+  sample.length <- 4e2
+  nsims <- 1e2
+  
+  makeRdsSample(
+    N.k =true.Nks , 
+    b.k = exp(true.log.bks),
+    sample.length = sample.length)
+}
+## Testing:
+# chords:::makeRdsExample()
 
 
 makeSnowBall <- function(rds.sample, seeds){
@@ -123,6 +139,10 @@ rdsObjectConstructor <- function(rds.sample=NULL,
 ## Testing
 # rdsObjectConstructor()
 
+
+
+
+
 initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
   ## Verification:
   if(any(table(rds.sample[,'interviewDt'])>1)) warning('Non unique interview times. Ignoring and proceeding...')
@@ -153,6 +173,74 @@ initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
 
 
 
+rdsObjectJacknife <- function(rds.object, jacknife.index){
+  # jacknife.index <- 300
+  rds.sample <- rds.object$rds.sample
+  
+  # Compute the time to be removed:
+  remove.interval <- rds.sample[jacknife.index+1, 2] - rds.sample[jacknife.index, 2]
+  
+  # Update sample:
+  n <- length(rds.sample[,1])
+  rds.sample[jacknife.index:n,2] <- rds.sample[(jacknife.index):n, 2]-remove.interval
+  
+  rdsObjectConstructor(
+    rds.sample = rds.sample,
+    I.t = rds.object$I.t,
+    degree.in = rds.object$degree.in,
+    degree.out = rds.object$degree.out)
+}
+## Testing
+# rds.object <- chords:::makeRDSExample()
+# rdsObjectJacknife(rds.object, 2)
+
+
+
+subseries <- function(x){
+  .min <- x[1]
+  n <- length(x)
+  min.inds <- rep(NA, n)
+  min.inds[1] <- TRUE
+  
+  for(i in 2:n){
+    if(x[i] < .min) {
+      .min <- x[i]
+      min.inds[i] <- TRUE
+    }
+    else min.inds[i] <- FALSE
+  }
+  return(min.inds)  
+}
+## Testing:
+# (x <- rnorm(100))
+# x[subseries(x)]
+
+
+
+rdsObjectAscend <- function(rds.object){
+  rds.sample <- rds.object$rds.sample
+  degrees <- unique(rds.sample$NS1)
+  rds.ascending <- NULL
+  
+  for(degree in degrees){
+    # degree <- degrees[[1]]
+    degree.ind <- rds.sample$NS1==degree
+    ascend.ind <- subseries(diff(rds.sample[degree.ind,2]))
+    rds.ascending <- rbind(rds.ascending, rds.sample[degree.ind,][ascend.ind,])
+  }
+  
+  rds.ascending <- rds.ascending[order(rds.ascending$interviewDt),]
+  
+  rdsObjectConstructor(
+    rds.sample = rds.ascending,
+    I.t = cumsum(rds.ascending$NS1>0),
+    degree.in = rds.ascending$NS1,
+    degree.out = rep(0,nrow(rds.ascending)))
+}
+## Testing
+# rds.object <- chords:::makeRDSExample()
+# rdsObjectAscend(rds.object)
+
 
 
 
@@ -163,12 +251,13 @@ formatArrivalTimes <- function(arrival.times){
   # convert to numeric
   # set origin to sampling start
   # convert to informative scale
+  
   arrival.times.numeric <- as.numeric(arrival.times)
   arrival.times.origin <- arrival.times.numeric - min(arrival.times.numeric, na.rm = TRUE)
   for(k in 1:10){
-    if(max(arrival.times.origin %% 10^k)>0) break
+    if( max(arrival.times.origin %% 10^k) >0) break
     }
-  arrival.times.clean <- arrival.times.origin /10^(k-1)
+  arrival.times.clean <- arrival.times.origin / 10^(k-1)
   return(arrival.times.clean)
 }
 ## Testing:
