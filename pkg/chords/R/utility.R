@@ -52,10 +52,10 @@ makeRDSExample <- function(){
 
 
 
-
+# Grow the snowball avolution from a degree sequence
 makeSnowBall <- function(rds.sample, seeds){
   coupon.inds <- grepl('coup[0-9]*', names(rds.sample))
-#   sample.length <- ncol(rds.sample)
+  #   sample.length <- ncol(rds.sample)
   
   I.t <- rep(NA, nrow(rds.sample))
   I.t[1] <- seeds
@@ -117,11 +117,15 @@ makeSnowBall <- function(rds.sample, seeds){
               degree.out=degree.out))
 }
 # ## Testing:
-# test.snowball <- makeSnowBall(rds.sample)
+# test.snowball <- chords:::makeSnowBall(rds.sample, seeds=1)
 # str(test.snowball)
 # table(rds.sample$NS1)
 # table(test.snowball$degree.in)
 # table(test.snowball$degree.out)
+
+
+
+
 
 rdsObjectConstructor <- function(rds.sample=NULL,
                                  I.t=NULL,
@@ -174,10 +178,12 @@ initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
 # ls.str(rds.object)
 
 
+# TODO: make compatible to RDS file format, and deal with coupons.
 # Prepare RDS object for jacknifing by removing arrivals
 # Sketch: remove observation by setting their arrival interval to zero (from the previous observation with same degree)
 rdsObjectJacknife <- function(rds.object, jack.ind, seeds=1){
   # jack.ind <- 300
+  # seeds <- 1
   rds.sample <- rds.object$rds.sample
   
   # Compute the time to be removed:
@@ -192,13 +198,12 @@ rdsObjectJacknife <- function(rds.object, jack.ind, seeds=1){
   rds.sample[rm.deg.ind[rm.deg.ind>jack.ind],2]-remove.interval
   
   rds.sample <- rds.sample[order(rds.sample[,2]),]
-  I.t <- makeSnowBall(rds.sample = rds.sample, seeds=seeds)
   
   rdsObjectConstructor(
     rds.sample = rds.sample,
-    I.t = I.t$I.t,
-    degree.in = I.t$degree.in,
-    degree.out = I.t$degree.out)
+    I.t = cumsum(rds.sample[,1]>0),
+    degree.in = rds.sample[,1],
+    degree.out = rds.object$degree.out)
 }
 ## Testing
 # rds.object <- chords:::makeRDSExample()
