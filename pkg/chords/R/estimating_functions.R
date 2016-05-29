@@ -1,4 +1,4 @@
-estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, regularize=FALSE, silent){
+estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regularize=FALSE, silent){
   ## Initialize:
   result <- list(N.k=NA, converge=FALSE)
   N.k <- NA
@@ -7,17 +7,22 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, regularize=FALSE,
   if(!regularize){
     target <- function(N.k){
       const1 <- N.k - (B.k/A.k)
-      # pre.const2 <- (N.k - n.k[which(k.ind)-1])
       pre.const2 <- (N.k - seq(0, n.k.count-1))
-      
       # Deal with impossible N.k:
       if(any(pre.const2 < 0)) return(-Inf)
-      
       const2 <- sum(1/pre.const2)
+      
+      # If jacknifing:
+      if(!is.null(jack.ind)) {
+        const2 <- const2 - sum(1/(N.k-jack.ind+1))
+        n.k.count <- n.k.count-length(jack.ind)
+      }
+    
       const1 * const2 - n.k.count
     }
   } 
   # Regulirized case:
+  ## TODO: allow jaknifing of regulirized version
   else{
     # Construct target function:
     target <- function(N.k){
@@ -70,7 +75,8 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, regularize=FALSE,
 estimate.b.k<- function (rds.object, 
                          const=1,
                          impute.Nks=FALSE,
-                         silent=TRUE) {
+                         silent=TRUE,
+                         jack.ind=NULL) {
   ### Sketch:
   # Generate estimable parameters vector.
   # Optimized parameter-wise.
@@ -106,7 +112,11 @@ estimate.b.k<- function (rds.object,
   n.k.counts<- rep(NA, max.observed.degree)
   convergence<- rep(NA, max.observed.degree)
   
-  A.k <- sum( head(I.t,-1) * arrival.intervals, na.rm=TRUE)
+  # If jacknifing:
+  jack.indicators <- rep(1,length(arrival.intervals))
+  if(!is.null(jack.ind)) jack.indicators[jack.ind] <- 0
+  
+  A.k <- sum( jack.indicators * head(I.t,-1) * arrival.intervals, na.rm=TRUE)
   
   uniques<- as.integer(names(degree.counts))
   Nk.estimates[-uniques]<- 0
@@ -118,19 +128,20 @@ estimate.b.k<- function (rds.object,
     n.k <- cumsum((arrival.degree==k))
     #     n.k <- cumsum((degree.in==k) - (degree.out==k))
     n.k.count <- degree.counts[paste(k)]
-    
     #     head(cbind(arrival.degree, n.k, I.t, arrival.intervals),20)
     #     head(cbind(arrival.degree[-1], n.k[-1], I.t[-1], arrival.intervals))
     #     head(cbind(arrival.degree[-1], head(n.k,-1), head(I.t,-1), arrival.intervals))
-    B.k <- sum( head(I.t,-1) * arrival.intervals * head(n.k,-1), na.rm=TRUE)    
+    B.k <- sum( jack.indicators * head(I.t,-1) * arrival.intervals * head(n.k,-1), na.rm=TRUE)    
     
     
+    # Root finding
     .temp <- estimate.b.k.2(k=k, 
                             A.k=A.k*const, 
                             B.k=B.k*const, 
                             n.k=n.k, 
                             n.k.count= n.k.count, 
                             k.ind=k.ind, 
+                            jack.ind = jack.ind,
                             regularize=FALSE, 
                             silent = silent)    
     
