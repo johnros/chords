@@ -80,6 +80,11 @@ estimate.b.k<- function (rds.object,
   ### Sketch:
   # Generate estimable parameters vector.
   # Optimized parameter-wise.
+  # rds.object: 
+  # const: a scaling for numerical stability.
+  # impute.Nks: 
+  # silent: 
+  # jack.ind: the indexes of observations to be deleted. 
   
   
   ### Verifications:
@@ -113,7 +118,7 @@ estimate.b.k<- function (rds.object,
   convergence<- rep(NA, max.observed.degree)
   
   # If jacknifing:
-  jack.indicators <- rep(1,length(arrival.intervals))
+  jack.indicators <- rep(1, length(arrival.intervals))
   if(!is.null(jack.ind)) jack.indicators[jack.ind] <- 0
   
   A.k <- sum( jack.indicators * head(I.t,-1) * arrival.intervals, na.rm=TRUE)

@@ -51,6 +51,8 @@ makeRDSExample <- function(){
 # chords:::makeRdsExample()
 
 
+
+
 makeSnowBall <- function(rds.sample, seeds){
   coupon.inds <- grepl('coup[0-9]*', names(rds.sample))
 #   sample.length <- ncol(rds.sample)
@@ -58,7 +60,7 @@ makeSnowBall <- function(rds.sample, seeds){
   I.t <- rep(NA, nrow(rds.sample))
   I.t[1] <- seeds
   degree.in <- rep(0, nrow(rds.sample))
-degree.in[1] <- rds.sample[1, 'NS1']
+  degree.in[1] <- rds.sample[1, 'NS1']
   degree.out <- rep(0, nrow(rds.sample))
   active.coupons <- list()
   for(period in 2:length(I.t)){
@@ -172,23 +174,31 @@ initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
 # ls.str(rds.object)
 
 
-
-rdsObjectJacknife <- function(rds.object, jacknife.index){
-  # jacknife.index <- 300
+# Prepare RDS object for jacknifing by removing arrivals
+# Sketch: remove observation by setting their arrival interval to zero (from the previous observation with same degree)
+rdsObjectJacknife <- function(rds.object, jack.ind, seeds=1){
+  # jack.ind <- 300
   rds.sample <- rds.object$rds.sample
   
   # Compute the time to be removed:
-  remove.interval <- rds.sample[jacknife.index+1, 2] - rds.sample[jacknife.index, 2]
+  rm.deg <- rds.sample[jack.ind,1]
+  rm.deg.ind <- which(rds.sample[,1]==rm.deg) # indexes of degree subseries
+  rm.deg.ind.1 <- which(rm.deg.ind==jack.ind) 
+  jack.ind.1 <- rm.deg.ind[rm.deg.ind.1+1]
+  remove.interval <- rds.sample[jack.ind.1, 2] - rds.sample[jack.ind, 2]
   
   # Update sample:
-  n <- length(rds.sample[,1])
-  rds.sample[jacknife.index:n,2] <- rds.sample[(jacknife.index):n, 2]-remove.interval
+  rds.sample[rm.deg.ind[rm.deg.ind>jack.ind],2] <- 
+  rds.sample[rm.deg.ind[rm.deg.ind>jack.ind],2]-remove.interval
+  
+  rds.sample <- rds.sample[order(rds.sample[,2]),]
+  I.t <- makeSnowBall(rds.sample = rds.sample, seeds=seeds)
   
   rdsObjectConstructor(
     rds.sample = rds.sample,
-    I.t = rds.object$I.t,
-    degree.in = rds.object$degree.in,
-    degree.out = rds.object$degree.out)
+    I.t = I.t$I.t,
+    degree.in = I.t$degree.in,
+    degree.out = I.t$degree.out)
 }
 ## Testing
 # rds.object <- chords:::makeRDSExample()
