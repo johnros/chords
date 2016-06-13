@@ -1,15 +1,15 @@
 import(graphics)
 import(stats)
 import(utils)
+import(MASS)
+import(magrittr)
+import(Matrix)
 
 export(initializeRdsObject)
 export(Estimate.b.k)
-export(ReEstimate.b.k)
 export(getTheta)
 export(makeRdsSample)
 export(thetaSmoothingNks)
 export(rdsObjectJacknife)
 export(makeJackControl)
 
-import(MASS)
-import(magrittr)

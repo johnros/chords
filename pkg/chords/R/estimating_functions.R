@@ -222,42 +222,56 @@ estimate.b.k<- function (rds.object,
 
 
 
-# Dispatching function for vanilla ML estimation of RDS
-Estimate.b.k<- function (rds.object) {
+
+
+
+
+
+# Main dispatching function RDS estimation 
+Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   
   ### Verifications:
   if(length(rds.object$estimates)>0) {
-    message('Note: rds object alreay has existing estimates.')  
+    message('RDS object has existing estimates. Overwriting.')  
   }
   
-  rds.object$estimates <- estimate.b.k(rds.object = rds.object, type='mle')
-  return(rds.object)    					
-}
-## Testing:
-# data(brazil)
-# rds.object2<- initializeRdsObject(brazil)
-# # Estimate:
-# rds.object.3 <- Estimate.b.k(rds.object = rds.object2 )
-
-
-
-
-
-# Re-estimate infinite Nks using various regularizations.
-ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
-  ### Verifications:
-  if(length(rds.object$estimates)==0) warning('Warn: No initial estimates to re-estimate.') 
-  
-  ## Initialization
   result <- rds.object$estimates
-  imput.ind <- which(result$convergence==1)# estimates to impute:
+  imput.ind <- which(result$convergence==1)
   
-  # Re-estimation:
-  if(type=='integrated'){
-    
+  
+  
+  # Vanilla MLE estimation:
+  if(type=='mle'){
+    result <- estimate.b.k(rds.object = rds.object, type='mle')  
   }
   
+  # Integrated maximum likelihood
+  else if(type=='integrated'){
+    result <- estimate.b.k(rds.object = rds.object, type='integrated')  
+  }
   
+  # Impute using observed degrees
+  else if(type=='observed'){
+    result$Nk.estimates[imput.ind] <- result$n.k.counts[imput.ind]
+  }
+  
+  # Regulirize using Jeffrey's prior
+  else if(type=='jeffreys'){
+    result <- estimate.b.k(rds.object = rds.object, type='jeffreys')
+  }
+  
+  # Parametric smoothing using beta[k] = beta*theta^k:
+  else if(type=='parametric'){
+    imput.ind <- which(is.finite(result$log.bk.estimates) & !is.na(result$log.bk.estimates))# estimates to impute:
+    result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
+  }
+  
+  # Impute using a naive rescaling heuristic
+  else if(type=='rescaling'){
+    result$Nk.estimates <- imputeEstimates(result$Nk.estimates, result$n.k.counts, result$convergence)
+  }
+  
+  # delete-d resampling:
   else if(type=='leave-d-out'){
     ## Sketch:
     # delete a random subset of d observations (not necesarily from missing degree!)
@@ -277,56 +291,36 @@ ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
     jack.Nks <- matrix(NA, nrow=n.deletions, ncol=n.nks)
     for(i in 1:n.deletions){
       deletion <- sample(N, d) # select arrivals to remove
-       .temp <- estimate.b.k(rds.object, delete.ind = deletion, type=type)
-       jack.Nks[i,] <- .temp$Nk.estimates[imput.ind]
+      .temp <- estimate.b.k(rds.object, delete.ind = deletion, type=type)
+      jack.Nks[i,] <- .temp$Nk.estimates[imput.ind]
     }
     
     # Compute degree-wise median
     clean.median <- function(x) median(x[x<Inf], na.rm=TRUE) # return median of non Inf
     result$Nk.estimates[imput.ind] <- apply(jack.Nks, 2, clean.median)
-    }
-  
-  
-  else if(type=='observed'){
-    result$Nk.estimates[imput.ind] <- result$n.k.counts[imput.ind]
   }
-  
-  
-  else if(type=='jeffreys'){
-    result <- estimate.b.k(rds.object = rds.object, type='jeffreys')
-  }
-  
-  
-  else if(type=='parametric'){
-    imput.ind <- which(is.finite(result$log.bk.estimates) & !is.na(result$log.bk.estimates))# estimates to impute:
-    result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
-  }
-  
-  
-  else if(type=='rescaling'){
-    result$Nk.estimates <- imputeEstimates(result$Nk.estimates, result$n.k.counts, result$convergence)
-  }
-  
   
   else{
     warning('Invalid re-estimation method.')
   }
   
   
-  # Start bundeling results:
+  # Packing output:
   result$likelihood <- likelihood(log.bk = result$log.bk.estimates, 
-                               Nk.estimates = result$Nk.estimates, 
-                               I.t = rds.object$I.t, 
-                               n.k.counts = result$n.k.counts, 
-                               degree.in = rds.object$degree.in , 
-                               degree.out = rds.object$degree.out , 
-                               arrival.intervals = result$arrival.intervals, 
-                               arrival.degree = result$arrival.degree)
+                                  Nk.estimates = result$Nk.estimates, 
+                                  I.t = rds.object$I.t, 
+                                  n.k.counts = result$n.k.counts, 
+                                  degree.in = rds.object$degree.in , 
+                                  degree.out = rds.object$degree.out , 
+                                  arrival.intervals = result$arrival.intervals, 
+                                  arrival.degree = result$arrival.degree)
   
   rds.object$estimates <- result
   return(rds.object)    					
 }
 ## Testing:
-# see 'testing ReEstimate function.R'
-
+# data(brazil)
+# rds.object2<- initializeRdsObject(brazil)
+# # Estimate:
+# rds.object.3 <- Estimate.b.k(rds.object = rds.object2 )
 
