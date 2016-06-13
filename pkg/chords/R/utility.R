@@ -420,3 +420,18 @@ likelihood <- function(
 #                     rds.object$degree.out, 
 #                     rds.object$estimates$arrival.intervals, 
 #                     rds.object$estimates$arrival.degree)
+
+
+# Make a control object for leave-d-out estimation
+makeJackControl <- function(d, B){
+  ## Verifications:
+  stopifnot( is.numeric(d))
+  stopifnot( is.numeric(B))
+  
+  # Pack output
+  result <- list(d=d, B=B)
+  class(result) <- 'jack.control'
+  return(result)
+}
+## Testing:
+# jack.control <- makeJackControl(10, 1e3)

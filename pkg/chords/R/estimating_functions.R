@@ -19,15 +19,14 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
   
 
   # Delete-d:
-  else if(type=='delete-d'){
+  else if(type=='leave-d-out'){
     if(is.null(delete.ind)) warning('Deletion indexes not specified!')
     
     target <- function(N.k){
       const1 <- N.k - (B.k/A.k)
       pre.const2 <- (N.k - seq(0, n.k.count-1))
-      # Deal with impossible N.k:
-      if(any(pre.const2 < 0)) return(-Inf)
-      
+      if(any(pre.const2 < 0)) return(-Inf) # Deal with impossible N.k
+      const2 <- sum(1/pre.const2)
       const2 <- const2 - sum(1/(N.k-delete.ind+1))
       n.k.count <- n.k.count-length(delete.ind)
       
@@ -42,9 +41,7 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
       const1 <- N.k-(B.k/A.k)
       # pre.const2 <- (N.k - n.k[which(k.ind)-1])
       pre.const2 <- (N.k - seq(0, n.k.count-1))
-      
-      # Deal with impossible N.k:
-      if(any(pre.const2<0)) return(-Inf)
+      if(any(pre.const2<0)) return(-Inf) # Deal with impossible N.k:
       
       const2.1 <- sum(1/pre.const2^3)
       const2.2 <- sum(1/pre.const2^2)
@@ -56,7 +53,16 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
   
   
   else if(type=='integrated'){
-    warn('Integrated MLE not implemented yet.')
+    # Construct target function: 
+    ## Yakir target:  sum(((N.k-n+1):N.k)^-1) - (n+1)*A/(N.k*A-B)
+    target <- function(N.k){
+      pre.const2 <- (N.k - seq(0, n.k.count-1))
+      if(any(pre.const2<0)) return(-Inf) # Deal with impossible N.k:
+      const2 <- sum(1/pre.const2)
+      const1 <- (n.k.count+1)*A.k/(N.k*A.k-B.k)
+      
+      const2- const1
+    }
   }
   
   
@@ -124,10 +130,9 @@ estimate.b.k<- function (rds.object,
   I.t <- rds.object$I.t
   degree.in <- rds.object$degree.in
   degree.out <- rds.object$degree.out
-  
   likelihood <- NA
   
-  ### Estimate:
+  ### Preliminaries:
   Nk.estimates<- rep(9999L, max.observed.degree) 
   names(Nk.estimates)<- seq_len(max.observed.degree)
   log.bk.estiamtes<- rep(NA, max.observed.degree) 
@@ -167,13 +172,6 @@ estimate.b.k<- function (rds.object,
     B.ks[k] <- B.k
     n.k.counts[k] <- n.k.count
   
-    # Impute using jeffrey's prior:
-    if(type=='jeffreys' && .temp$converge==0){
-      .temp <- estimate.b.k.2(k=k, A.k=A.k, B.k=B.k, n.k=n.k, 
-                              n.k.count= n.k.count, k.ind=k.ind, 
-                              type='jefffreys')    
-    }
-    
     Nk.estimates[k]<-.temp$N.k
     log.bk.estiamtes[k] <- log(n.k.count) - log(.temp$N.k *  A.k - B.k)
   } # End looping over estimable degrees.  
@@ -242,19 +240,6 @@ Estimate.b.k<- function (rds.object) {
 # rds.object.3 <- Estimate.b.k(rds.object = rds.object2 )
 
 
-# Make a control object for leave-d-out estimation
-makeJackControl <- function(d, B){
-  ## Verifications:
-  stopifnot( is.numeric(d))
-  stopifnot( is.numeric(B))
-  
-  # Pack output
-  result <- list(d=d, B=B)
-  class(result) <- 'jack.control'
-  return(result)
-}
-## Testing:
-# jack.control <- makeJackControl(10, 1e3)
 
 
 
@@ -292,7 +277,8 @@ ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
     jack.Nks <- matrix(NA, nrow=n.deletions, ncol=n.nks)
     for(i in 1:n.deletions){
       deletion <- sample(N, d) # select arrivals to remove
-      jack.Nks[i,] <- chords:::estimate.b.k(rds.object, delete.ind = deletion, type=type)$Nk.estimates[imput.ind]
+       .temp <- estimate.b.k(rds.object, delete.ind = deletion, type=type)
+       jack.Nks[i,] <- .temp$Nk.estimates[imput.ind]
     }
     
     # Compute degree-wise median
@@ -307,7 +293,7 @@ ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
   
   
   else if(type=='jeffreys'){
-    
+    result <- estimate.b.k(rds.object = rds.object, type='jeffreys')
   }
   
   
@@ -341,26 +327,6 @@ ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
   return(rds.object)    					
 }
 ## Testing:
-see <- function(x) plot(x$estimates$Nk.estimates, type='h')
-
-## Brazil Example:
-# data(brazil)
-# rds.object2<- initializeRdsObject(brazil)
-# rds.object <- Estimate.b.k(rds.object = rds.object2 )
-# rds.object.4 <- ReEstimate.b.k(rds.object = rds.object, type='observed')
-# see(rds.object.4)
-# rds.object.5 <- ReEstimate.b.k(rds.object = rds.object, type='rescaling')
-# see(rds.object.5)
-# rds.object.6 <- ReEstimate.b.k(rds.object = rds.object, type='parametric')
-# see(rds.object.6)
-# jack.control <- makeJackControl(3, 1e1)
-# rds.object.7 <- ReEstimate.b.k(rds.object = rds.object, type='leave-d-out', jack.control = jack.control)
-# see(rds.object.7)
-# rds.object.8 <- ReEstimate.b.k(rds.object = rds.object, type='leave-d-out', jack.control = jack.control)
-# see(rds.object.7)
-
-
-# Simulation Example:
-
+# see 'testing ReEstimate function.R'
 
 
