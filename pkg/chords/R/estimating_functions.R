@@ -1,31 +1,42 @@
-estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regularize=FALSE, silent){
+estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type){
   ## Initialize:
   result <- list(N.k=NA, converge=FALSE)
   N.k <- NA
   
   # Unregulirized estimator:
-  if(!regularize){
+  if(type=='mle'){
+    if(!is.null(delete.ind)) message('MLE estimation selected. Ignoring Delete-d.')
+    
     target <- function(N.k){
       const1 <- N.k - (B.k/A.k)
       pre.const2 <- (N.k - seq(0, n.k.count-1))
       # Deal with impossible N.k:
       if(any(pre.const2 < 0)) return(-Inf)
       const2 <- sum(1/pre.const2)
-      
-      # If jacknifing:
-      if(!is.null(jack.ind)) {
-        const2 <- const2 - sum(1/(N.k-jack.ind+1))
-        n.k.count <- n.k.count-length(jack.ind)
-      }
-    
       const1 * const2 - n.k.count
     }
   } 
-  # Regulirized case:
-
-  ## TODO: allow jaknifing of regulirized version
   
-  else{
+
+  # Delete-d:
+  else if(type=='delete-d'){
+    if(is.null(delete.ind)) warning('Deletion indexes not specified!')
+    
+    target <- function(N.k){
+      const1 <- N.k - (B.k/A.k)
+      pre.const2 <- (N.k - seq(0, n.k.count-1))
+      # Deal with impossible N.k:
+      if(any(pre.const2 < 0)) return(-Inf)
+      
+      const2 <- const2 - sum(1/(N.k-delete.ind+1))
+      n.k.count <- n.k.count-length(delete.ind)
+      
+      const1 * const2 - n.k.count
+    }
+  } 
+  
+  
+  else if(type=='jeffreys'){
     # Construct target function:
     target <- function(N.k){
       const1 <- N.k-(B.k/A.k)
@@ -43,11 +54,20 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regular
     }
   }
   
+  
+  else if(type=='integrated'){
+    warn('Integrated MLE not implemented yet.')
+  }
+  
+  
+  
   # Estimate n by finding root of target:
   roots <- NULL
   .interval <- n.k.count * c(1, 10*max(1,1/A.k))
-  try(roots <- uniroot(f = target, interval =.interval, 
-                       extendInt = "no", maxiter = 1e4), silent = silent)
+  try(
+    roots <- uniroot(f = target, interval =.interval, extendInt = "no", maxiter = 1e4), 
+    silent = TRUE
+    )
   
   # In case of convergence:
   if(length(roots)>0) {
@@ -66,8 +86,7 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regular
     result$converge <- -1
   }
   
-  else warning('Could not compute estimator, nor gradient.')
-  
+  else warning('Could not compute estimator nor gradient. Returning NA.')
   
   result$N.k <- ceiling(result$N.k)
   return(result)
@@ -83,25 +102,15 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regular
 
 
 # estimate beta_k from sampled degrees and snowball matrix:
-estimate.b.k<- function (rds.object, 
-                         const=1,
-                         impute.Nks=FALSE,
-                         silent=TRUE,
-                         jack.ind=NULL) {
+estimate.b.k<- function (rds.object,
+                         delete.ind=NULL, 
+                         type) {
   ### Sketch:
-  # Generate estimable parameters vector.
-  # Optimized parameter-wise.
-  # rds.object: 
-  # const: a scaling for numerical stability.
-  # impute.Nks: 
-  # silent: 
-  # jack.ind: the indexes of observations to be deleted. 
+  # Generate estimable parameters vector. Optimized parameter-wise for efficiency.
+  # rds.object: self explanatory.
+  # delete.ind: the indexes of observations to be deleted. 
+  # type: if imputation is part of the estimation. 
   
-  
-  ### Verifications:
-  if(length(rds.object$estimates)>0) {
-    message('Note: rds object alreay has existing estimates.')  
-  }
   
   ### Initialize:
   arrival.times <- formatArrivalTimes(rds.object$rds.sample$interviewDt)
@@ -111,7 +120,6 @@ estimate.b.k<- function (rds.object,
   max.observed.degree<- max(arrival.degree)
   ## TODO: should the degree of the first (seed) be removed?
   degree.counts<- table(arrival.degree)
-  
   # Sequences per degree
   I.t <- rds.object$I.t
   degree.in <- rds.object$degree.in
@@ -130,60 +138,48 @@ estimate.b.k<- function (rds.object,
   
   # If jacknifing:
   jack.indicators <- rep(1, length(arrival.intervals))
-  if(!is.null(jack.ind)) jack.indicators[jack.ind] <- 0
+  if(!is.null(delete.ind)) jack.indicators[delete.ind] <- 0
   
   A.k <- sum( jack.indicators * head(I.t,-1) * arrival.intervals, na.rm=TRUE)
   
   uniques<- as.integer(names(degree.counts))
   Nk.estimates[-uniques]<- 0
   for(k in uniques){
-    # k <- uniques[[1]]
     k.ind <- arrival.degree==k
     k.ind[1] <- FALSE # dealing with sample kickoff
     
     n.k <- cumsum((arrival.degree==k))
-    #     n.k <- cumsum((degree.in==k) - (degree.out==k))
     n.k.count <- degree.counts[paste(k)]
-    #     head(cbind(arrival.degree, n.k, I.t, arrival.intervals),20)
-    #     head(cbind(arrival.degree[-1], n.k[-1], I.t[-1], arrival.intervals))
-    #     head(cbind(arrival.degree[-1], head(n.k,-1), head(I.t,-1), arrival.intervals))
     B.k <- sum( jack.indicators * head(I.t,-1) * arrival.intervals * head(n.k,-1), na.rm=TRUE)    
-    
     
     # Root finding
     .temp <- estimate.b.k.2(k=k, 
-                            A.k=A.k*const, 
-                            B.k=B.k*const, 
+                            A.k=A.k, 
+                            B.k=B.k, 
                             n.k=n.k, 
                             n.k.count= n.k.count, 
                             k.ind=k.ind, 
-                            jack.ind = jack.ind,
-                            regularize=FALSE, 
-                            silent = silent)    
+                            delete.ind = delete.ind,
+                            type=type)    
     
     convergence[k] <- .temp$converge
     A.ks[k] <- A.k
     B.ks[k] <- B.k
     n.k.counts[k] <- n.k.count
-    
-    
-    
+  
     # Impute using jeffrey's prior:
-    if(impute.Nks=='jeff' && .temp$converge==0){
-      .temp <- estimate.b.k.2(k=k, A.k=A.k*const, B.k=B.k*const, n.k=n.k, 
+    if(type=='jeffreys' && .temp$converge==0){
+      .temp <- estimate.b.k.2(k=k, A.k=A.k, B.k=B.k, n.k=n.k, 
                               n.k.count= n.k.count, k.ind=k.ind, 
-                              regularize=TRUE)    
+                              type='jefffreys')    
     }
     
     Nk.estimates[k]<-.temp$N.k
     log.bk.estiamtes[k] <- log(n.k.count) - log(.temp$N.k *  A.k - B.k)
   } # End looping over estimable degrees.  
   
-  # Impute by naive scaling:
-  if(impute.Nks=='john') {
-    Nk.estimates <- imputeEstimates(Nk.estimates, n.k.counts, convergence)
-  }
-
+  
+  # Compute likelihood at converged estimates.
   likelihood.val <- likelihood(log.bk = log.bk.estiamtes, 
                            Nk.estimates = Nk.estimates, 
                            I.t = I.t, 
@@ -193,6 +189,7 @@ estimate.b.k<- function (rds.object,
                            arrival.intervals = arrival.intervals, 
                            arrival.degree = arrival.degree)
   
+  # Pack output
   result<- list(
     call=sys.call(),
     Nk.estimates=Nk.estimates, 
@@ -204,12 +201,166 @@ estimate.b.k<- function (rds.object,
     arrival.degree=arrival.degree, 
     convergence=convergence,
     likelihood=likelihood.val)
-  
   return(result)    					
 }
+## Testing:
+# data(brazil)
+# # Initialize RDS object:
+# rds.object2<- initializeRdsObject(brazil)
+# # Estimate:
+# rds.object2$estimates <- estimate.b.k(rds.object = rds.object2 )
+# # View estimates:
+# plot(rds.object2$estimates$Nk.estimates, type='h')
+# # Population size estimate:
+# sum(rds.object2$estimates$Nk.estimates)
+# plot(rds.object2$estimates$log.bk.estimates, type='h')
+# ## Recover theta assuming b.k=b_0*k^theta
+# getTheta(rds.object2)
+# # How many degrees were imputed?:
+# table(rds.object2$estimates$convergence)
 
 
 
+
+
+
+# Dispatching function for vanilla ML estimation of RDS
+Estimate.b.k<- function (rds.object) {
+  
+  ### Verifications:
+  if(length(rds.object$estimates)>0) {
+    message('Note: rds object alreay has existing estimates.')  
+  }
+  
+  rds.object$estimates <- estimate.b.k(rds.object = rds.object, type='mle')
+  return(rds.object)    					
+}
+## Testing:
+# data(brazil)
+# rds.object2<- initializeRdsObject(brazil)
+# # Estimate:
+# rds.object.3 <- Estimate.b.k(rds.object = rds.object2 )
+
+
+# Make a control object for leave-d-out estimation
+makeJackControl <- function(d, B){
+  ## Verifications:
+  stopifnot( is.numeric(d))
+  stopifnot( is.numeric(B))
+  
+  # Pack output
+  result <- list(d=d, B=B)
+  class(result) <- 'jack.control'
+  return(result)
+}
+## Testing:
+# jack.control <- makeJackControl(10, 1e3)
+
+
+
+# Re-estimate infinite Nks using various regularizations.
+ReEstimate.b.k<- function (rds.object, type, jack.control=NULL) {
+  ### Verifications:
+  if(length(rds.object$estimates)==0) warning('Warn: No initial estimates to re-estimate.') 
+  
+  ## Initialization
+  result <- rds.object$estimates
+  imput.ind <- which(result$convergence==1)# estimates to impute:
+  
+  # Re-estimation:
+  if(type=='integrated'){
+    
+  }
+  
+  
+  else if(type=='leave-d-out'){
+    ## Sketch:
+    # delete a random subset of d observations (not necesarily from missing degree!)
+    # repeat process B times.
+    # return the degree-wise median of the converging repeats
+    
+    
+    stopifnot(class(jack.control)=='jack.control')
+    d <- jack.control$d # number of observation to drop
+    n.deletions <- jack.control$B # number of repeats
+    
+    N <- length(rds.object$I.t)
+    stopifnot(d<N) # verify number of deletion smaller than sample size
+    imput.ind <- !is.na(result$convergence)
+    n.nks <- sum(imput.ind)
+    
+    jack.Nks <- matrix(NA, nrow=n.deletions, ncol=n.nks)
+    for(i in 1:n.deletions){
+      deletion <- sample(N, d) # select arrivals to remove
+      jack.Nks[i,] <- chords:::estimate.b.k(rds.object, delete.ind = deletion, type=type)$Nk.estimates[imput.ind]
+    }
+    
+    # Compute degree-wise median
+    clean.median <- function(x) median(x[x<Inf], na.rm=TRUE) # return median of non Inf
+    result$Nk.estimates[imput.ind] <- apply(jack.Nks, 2, clean.median)
+    }
+  
+  
+  else if(type=='observed'){
+    result$Nk.estimates[imput.ind] <- result$n.k.counts[imput.ind]
+  }
+  
+  
+  else if(type=='jeffreys'){
+    
+  }
+  
+  
+  else if(type=='parametric'){
+    imput.ind <- which(is.finite(result$log.bk.estimates) & !is.na(result$log.bk.estimates))# estimates to impute:
+    result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
+  }
+  
+  
+  else if(type=='rescaling'){
+    result$Nk.estimates <- imputeEstimates(result$Nk.estimates, result$n.k.counts, result$convergence)
+  }
+  
+  
+  else{
+    warning('Invalid re-estimation method.')
+  }
+  
+  
+  # Start bundeling results:
+  result$likelihood <- likelihood(log.bk = result$log.bk.estimates, 
+                               Nk.estimates = result$Nk.estimates, 
+                               I.t = rds.object$I.t, 
+                               n.k.counts = result$n.k.counts, 
+                               degree.in = rds.object$degree.in , 
+                               degree.out = rds.object$degree.out , 
+                               arrival.intervals = result$arrival.intervals, 
+                               arrival.degree = result$arrival.degree)
+  
+  rds.object$estimates <- result
+  return(rds.object)    					
+}
+## Testing:
+see <- function(x) plot(x$estimates$Nk.estimates, type='h')
+
+## Brazil Example:
+# data(brazil)
+# rds.object2<- initializeRdsObject(brazil)
+# rds.object <- Estimate.b.k(rds.object = rds.object2 )
+# rds.object.4 <- ReEstimate.b.k(rds.object = rds.object, type='observed')
+# see(rds.object.4)
+# rds.object.5 <- ReEstimate.b.k(rds.object = rds.object, type='rescaling')
+# see(rds.object.5)
+# rds.object.6 <- ReEstimate.b.k(rds.object = rds.object, type='parametric')
+# see(rds.object.6)
+# jack.control <- makeJackControl(3, 1e1)
+# rds.object.7 <- ReEstimate.b.k(rds.object = rds.object, type='leave-d-out', jack.control = jack.control)
+# see(rds.object.7)
+# rds.object.8 <- ReEstimate.b.k(rds.object = rds.object, type='leave-d-out', jack.control = jack.control)
+# see(rds.object.7)
+
+
+# Simulation Example:
 
 
 

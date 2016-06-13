@@ -178,12 +178,16 @@ initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
 # ls.str(rds.object)
 
 
+
+# Deprecated function. Deletes a single observation from a sample and shifts times accordingly. 
+# Replaced by the jack.ind switch in estimate.b.k.
+# Sketch: remove observation by setting their arrival interval to zero (from the previous observation with same degree)
 # TODO: make compatible to RDS file format, and deal with coupons.
 # Prepare RDS object for jacknifing by removing arrivals
-# Sketch: remove observation by setting their arrival interval to zero (from the previous observation with same degree)
 rdsObjectJacknife <- function(rds.object, jack.ind, seeds=1){
-  # jack.ind <- 300
-  # seeds <- 1
+  # rds.object= the output of makeRDSPObject
+  # jack.ind= the indicators of observations to delete.
+  
   rds.sample <- rds.object$rds.sample
   
   # Compute the time to be removed:
@@ -296,18 +300,19 @@ smoothDegrees <- function(degree.counts){
 }
 
 
-
+# re-estimate Nks by inflating observed counts 
 imputeEstimates <- function(Nk.estimates, n.k.counts, convergence){
-  conv.inds <- as.logical(convergence==0)
-  impute.inds <- as.logical(convergence==1L)
+  conv.inds <- as.logical(convergence<1)
+  impute.count <- sum(convergence==1, na.rm=TRUE )
   
-  if( sum(conv.inds, na.rm=TRUE)>2 && any(na.omit(impute.inds))){
-    .data.frame <- na.omit(data.frame(y=Nk.estimates, 
-                                      x=n.k.counts, 
-                                      conv.ind=conv.inds,
-                                      impute.ind=impute.inds))
-    lm.2 <- rlm(y ~ x - 1, data=.data.frame, subset=conv.inds , maxit=100L)
-    Nk.estimates[which(impute.inds)]  <- predict(lm.2, newdata = subset(.data.frame, impute.inds))  
+  if( sum(conv.inds, na.rm=TRUE)>2 && impute.count>0){
+    
+    .data.frame <- data.frame(y=Nk.estimates, x=n.k.counts) 
+    
+    lm.2 <- rlm(y ~ x - 1, data=.data.frame[conv.inds,], maxit=100L)
+    
+    Nk.estimates[which(!conv.inds)]  <- 
+      predict(lm.2, newdata = .data.frame[which(!conv.inds),]) 
   }
   return(Nk.estimates)                                                
 }
@@ -321,11 +326,11 @@ imputeEstimates <- function(Nk.estimates, n.k.counts, convergence){
 
 ## Estimate theta assuming beta_k=beta * k^theta:
 getTheta <- function(rds.object, bin=1, robust=TRUE){
-  nk.estimates <- rds.object$estimates
+  estimates <- rds.object$estimates
   
-  log.bks <- nk.estimates$log.bk.estimates
+  log.bks <- estimates$log.bk.estimates
   log.ks <- log(seq_along(log.bks)*bin)
-  ok.inds <- is.finite(log.bks)& !is.na(log.bks)
+  ok.inds <- is.finite(log.bks) & !is.na(log.bks)
   
   if(robust) {
     lm.1 <- rlm(log.bks[ok.inds]~log.ks[ok.inds])
@@ -340,24 +345,37 @@ getTheta <- function(rds.object, bin=1, robust=TRUE){
     theta = coefs$log.ks,
     model=lm.1))
 }
+## Testing:
+# data(brazil)
+# rds.object2<- initializeRdsObject(brazil)
+# rds.object <- Estimate.b.k(rds.object = rds.object2 )
+# getTheta(rds.object)
+
 
 
 ## Recovering Nk with smoothed Nk:
 thetaSmoothingNks <- function(rds.object,...){
+  estimates <- rds.object$estimates
+  log.bks <- estimates$log.bk.estimates
+  ok.inds <- is.finite(log.bks) & !is.na(log.bks)
+  
   theta <- getTheta(rds.object, ...)
   smooth.bks <- exp(predict(theta$model))
-  A.ks <- na.omit(rds.object$estimates$A.ks)
-  B.ks <- na.omit(rds.object$estimates$B.ks)
-  n.k.counts  <- na.omit(rds.object$estimates$n.k.counts)
+  
+  A.ks <- estimates$A.ks[ok.inds]
+  B.ks <- estimates$B.ks[ok.inds]
+  n.k.counts  <- estimates$n.k.counts[ok.inds]
   smooth.Nks <- (n.k.counts/smooth.bks + B.ks)/A.ks
   
   ## FIXME: 
   # if log.b.ks is infinite, smooth.Nks cannot be computed because
   # A.ks and B.ks will exist but smooth.bks will not. 
-  
   return(smooth.Nks)
 }
 ## Testing:
+# data(brazil)
+# rds.object2<- initializeRdsObject(brazil)
+# rds.object <- Estimate.b.k(rds.object = rds.object2 )
 # thetaSmoothingNks(rds.object)
 
 
@@ -369,20 +387,17 @@ likelihood <- function(
   log.bk, Nk.estimates, I.t, 
   n.k.counts, degree.in, degree.out, 
   arrival.intervals, arrival.degree){
-  ### Verification:
   
   ### Initialization:
   uniques <- which(!is.na(n.k.counts))
   n.k.t <- makeNKT(uniques, degree.in, degree.out)
   betas <- exp(log.bk)
   
-  
   ## Computation
   result <- 0.
   for(i in seq_along(arrival.degree)){
     if(i==1) next()
     for(j in seq_along(uniques)){ 
-      #       i <- 5; j <- 5
       k <- uniques[[j]]
       lambda <-  betas[k] * (Nk.estimates[k] - n.k.t[j,i-1]) * I.t[i-1]
       lambda <- max(lambda, .Machine$double.eps) 
@@ -404,5 +419,4 @@ likelihood <- function(
 #                     rds.object$degree.in, 
 #                     rds.object$degree.out, 
 #                     rds.object$estimates$arrival.intervals, 
-#                     rds.object$estimates$arrival.degree,
-#                     const = 100)
+#                     rds.object$estimates$arrival.degree)
