@@ -7,7 +7,7 @@ Generate a synthetic (simulated) RDS sample.
 
 \description{
 Generates a sample from the sampling process assumed in the reference.
-Well, actually, only the sufficient statistics required by \code{\link{estimate.b.k}} are returned.
+Well, actually, only the sufficient statistics required by \code{\link{Estimate.b.k}} are returned.
 }
 
 \usage{
@@ -25,20 +25,23 @@ makeRdsSample(N.k, b.k, sample.length)
 %}
 
 \value{
-  An object of class \code{rds-object} suitable for applying \code{\link{estimate.b.k}}.
+  An object of class \code{rds-object} suitable for applying \code{\link{Estimate.b.k}}.
 }
 
 \references{
-  [1] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.}
+  [1] Berchenko, Y., Rosenblatt J.D., and S.D.W. Frost. 
+  "Modeling and Analyzing Respondent Driven Sampling as a Counting Process." 
+  arXiv:1304.3505
+  }
 
 
 \note{
- The simulator does not prodice a whole RDS sample, but rather the sufficient statistics required for applying \code{\link{estimate.b.k}}.
+ The simulator does not prodice a whole RDS sample, but rather the sufficient statistics required for applying \code{\link{Estimate.b.k}}.
 }
 
 
 \seealso{
-\code{\link{estimate.b.k}}
+    \code{\link{Estimate.b.k}}
 }
 \examples{
 # Generate data:
@@ -52,6 +55,6 @@ rds.simulated.object <- makeRdsSample(
   sample.length = sample.length)
 
 # Estimate:
-rds.simulated.object$estimates <- estimate.b.k(rds.object = rds.simulated.object )
+Estimate.b.k(rds.object = rds.simulated.object )
 chords:::compareNkEstimate(rds.simulated.object$estimates$Nk.estimates, true.Nks)
 }

@@ -44,8 +44,5 @@ A list including the following components:
   \code{\link{makeRdsSample}}
 }
 
-\examples{
-# See in estimate.b.k()
-}
 
 

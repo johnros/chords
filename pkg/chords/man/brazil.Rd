@@ -29,26 +29,24 @@ The format of the data is essentially that of the RDS file format as specified i
 The RDS format has been augmented with the time of interview (\code{interviewDt} variable) required for the methodology in [1].
 
 The \code{interviewDt} variable encodes the time of interview.
-For the purpose of calling \code{\link{estimate.b.k}} the scale and origin are imaterial. We thus use an arbitrary efficient encoding which might not adhere to the original scale.
+For the purpose of calling \code{\link{Estimate.b.k}} the scale and origin are imaterial. We thus use an arbitrary efficient encoding which might not adhere to the original scale.
 
 For full details see the Source section.
 }
 
 \source{
-[1] Salganik, M.J., Fazito, D., Bertoni, N., Abdo, A.H., Mello, M.B., and Bastos, F.I. (2011). "Assessing Network Scale-up Estimates for Groups Most at Risk of HIV/AIDS: Evidence From a Multiple-Method Study of Heavy Drug Users in Curitiba,
-Brazil." American Journal of Epidemiology, 174(10): 1190-1196. http://dx.doi.org/10.1093/aje/kwr246
-
-And \url{http://opr.princeton.edu/archive/nsum/}
+  [1] Salganik, M.J., Fazito, D., Bertoni, N., Abdo, A.H., Mello, M.B., and Bastos, F.I. (2011). 
+  "Assessing Network Scale-up Estimates for Groups Most at Risk of HIV/AIDS: Evidence From a Multiple-Method Study of Heavy Drug Users in Curitiba,
+  Brazil." 
+  American Journal of Epidemiology, 174(10): 1190-1196. 
+  
+  And \url{http://opr.princeton.edu/archive/nsum/}
 }
 
 \references{
-
-  [2] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.
-
-}
-
-\examples{
-# see estimate.b.k()
+  [1] Berchenko, Y., Rosenblatt J.D., and S.D.W. Frost. 
+  "Modeling and Analyzing Respondent Driven Sampling as a Counting Process." 
+  arXiv:1304.3505
 }
 
 \keyword{datasets}

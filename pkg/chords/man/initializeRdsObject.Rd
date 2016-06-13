@@ -5,7 +5,7 @@
   Construct a \code{rds-object} from a data.frame.
 }
 \description{
-Given a data frame with the appropriate variables, initializes a \code{rds-object} with the components required by the \code{\link{estimate.b.k}} function for estimation.
+Given a data frame with the appropriate variables, initializes a \code{rds-object} with the components required by the \code{\link{Estimate.b.k}} function for estimation.
 }
 \usage{
   initializeRdsObject(rds.sample, bin=1L, seeds=1L)
@@ -18,7 +18,7 @@ Given a data frame with the appropriate variables, initializes a \code{rds-objec
 }
 
 \details{
-The essence of the function is in recovering the sampling snowball required by \code{\link{estimate.b.k}}. 
+The essence of the function is in recovering the sampling snowball required by \code{\link{Estimate.b.k}}. 
 The function allows for recruiters to enter and exit the sampling snowball.
 The number of seed recruiters is typically not specified in an RDS file.
 The \code{seeds} argument is a workaround that allows to specify directly this number.
@@ -49,17 +49,18 @@ A list with the following components.
 \item{degree.in}{An integer with the degree of an added recruiter at the moments of recruitment.}
 \item{degree.out}{An integer with the degree of a removed recruiter at the moment of recruitment.}}
 \item{original.ordering}{The order of the arrivals as was inputed in \code{rds.sample$interviewDt}}
-\item{estimates}{A placeholder for the future output of \code{\link{estimate.b.k}}}
+\item{estimates}{A placeholder for the future output of \code{\link{Estimate.b.k}}}
 }
 }
 
 \references{
-  [1] Berchenko, Yakir, Jonathan Rosenblatt, and Simon D. W. Frost. "Modeling and Analyzing Respondent Driven Sampling as a Counting Process."" arXiv:1304.3505, April 11, 2013. HTTP://arXiv.org/abs/1304.3505.
-}
+[1] Berchenko, Y., Rosenblatt J.D., and S.D.W. Frost. 
+  "Modeling and Analyzing Respondent Driven Sampling as a Counting Process." 
+  arXiv:1304.3505
+  }
 
 \seealso{
-  \code{\link{estimate.b.k}}, \code{\link{makeRdsSample}}, \code{\link{brazil}}
-}
-\examples{
-# See examples in estimate.b.k()
+  \code{\link{Estimate.b.k}}, 
+  \code{\link{makeRdsSample}}, 
+  \code{\link{brazil}}
 }
