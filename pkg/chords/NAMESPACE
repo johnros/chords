@@ -3,7 +3,6 @@ import(stats)
 import(utils)
 import(MASS)
 import(magrittr)
-import(Matrix)
 
 export(initializeRdsObject)
 export(Estimate.b.k)
