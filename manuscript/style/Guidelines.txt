@@ -1,0 +1,6 @@
+All new submissions must provide attachments or links to the following: 
+(1) PDF manuscript in JSS style, 
+(2) source code for the software, 
+(3) replication materials for all results from the manuscript, preferably via a standalone replication script. The replication materials must enable reproducibility of all results from the manuscript (see also "Review Process" above). Also the license(s) of the software should be clearly indicated (and need to include the GPL-2 or GPL-3 or a GPL-compatible license for publication in JSS, see above). If the submission satisfies these requirements the corresponding author will receive an email with confirmation of receipt and a JSS submission number. If you do not receive such an acknowledgment, contact editor@jstatsoft.org. Use the JSS submission number for all other correspondence with the editor.
+
+

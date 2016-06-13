@@ -151,7 +151,7 @@ rdsObjectConstructor <- function(rds.sample=NULL,
 
 initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
   ## Verification:
-  if(any(table(rds.sample[,'interviewDt'])>1)) warning('Non unique interview times. Ignoring and proceeding...')
+  if(any(table(rds.sample[,'interviewDt'])>1)) message('Non unique interview times. Ignoring and proceeding...')
   
   ## Initialization:
   

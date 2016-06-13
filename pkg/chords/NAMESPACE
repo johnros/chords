@@ -1,10 +1,13 @@
+import(graphics)
+import(stats)
+import(utils)
+
 export(initializeRdsObject)
 export(estimate.b.k)
 export(getTheta)
 export(makeRdsSample)
 export(thetaSmoothingNks)
 export(rdsObjectJacknife)
-export(rdsObjectAscend)
 
 import(MASS)
 import(magrittr)

@@ -22,7 +22,9 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regular
     }
   } 
   # Regulirized case:
+
   ## TODO: allow jaknifing of regulirized version
+  
   else{
     # Construct target function:
     target <- function(N.k){
@@ -52,11 +54,20 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, jack.ind, regular
     result$N.k <- roots$root
     result$converge <- 0 # 0 marks succeful convergence!
   } 
+  
   # In case of non convergence:
-  else {
-    result$N.k <- Inf #n.k.count
-    result$converge <- sign(target(.interval[2]))
+  else if(sign(target(.interval[2]))>0) {
+    result$N.k <- Inf 
+    result$converge <- 1
   }
+  
+  else if(sign(target(.interval[2]))<0) {
+    result$N.k <- n.k.count
+    result$converge <- -1
+  }
+  
+  else warning('Could not compute estimator, nor gradient.')
+  
   
   result$N.k <- ceiling(result$N.k)
   return(result)
@@ -89,7 +100,7 @@ estimate.b.k<- function (rds.object,
   
   ### Verifications:
   if(length(rds.object$estimates)>0) {
-    message('Overwriting existing estimates in rds.object.')  
+    message('Note: rds object alreay has existing estimates.')  
   }
   
   ### Initialize:
@@ -155,6 +166,8 @@ estimate.b.k<- function (rds.object,
     B.ks[k] <- B.k
     n.k.counts[k] <- n.k.count
     
+    
+    
     # Impute using jeffrey's prior:
     if(impute.Nks=='jeff' && .temp$converge==0){
       .temp <- estimate.b.k.2(k=k, A.k=A.k*const, B.k=B.k*const, n.k=n.k, 
@@ -166,16 +179,11 @@ estimate.b.k<- function (rds.object,
     log.bk.estiamtes[k] <- log(n.k.count) - log(.temp$N.k *  A.k - B.k)
   } # End looping over estimable degrees.  
   
-  
-  
-  
-  # Impute using my heuristic:
+  # Impute by naive scaling:
   if(impute.Nks=='john') {
     Nk.estimates <- imputeEstimates(Nk.estimates, n.k.counts, convergence)
   }
 
-  
-  
   likelihood.val <- likelihood(log.bk = log.bk.estiamtes, 
                            Nk.estimates = Nk.estimates, 
                            I.t = I.t, 

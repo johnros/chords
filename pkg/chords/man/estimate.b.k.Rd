@@ -12,7 +12,8 @@ The underlying idea is that the sample spreads like an epidemic in the target po
   estimate.b.k(rds.object, 
   const=1,
   impute.Nks=FALSE,
-  silent=TRUE)
+  silent=TRUE, 
+  jack.ind)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +23,7 @@ The underlying idea is that the sample spreads like an epidemic in the target po
 \item{const}{A scaler value for numerical stability. Should not be altered.}
 \item{impute.Nks}{Should inestimable values be imputed?}
 \item{silent}{For debugging purposes.}
+\item{jack.ind}{Index of observation to remove. For regulirizing estimator by Jacknifing.}
 }
 
 \details{
@@ -29,6 +31,8 @@ See the reference for a description of the likelihood problem solved.
 Optimization is performed by noting that likelihood is coordinate-wise convex, thus amounts to a series of line-searches.
 
 If \code{impute.Nk} is enabled (default), a simpe heuristic is used to estimate degree frequencies which are inestimable using maximum likelihood. This essentially consists of scaling the observed degree by the average observed-to-estimated factor over all estimable frequencies.
+
+The estimated population sizes may be infinite. One possible regularizatin scheme is by Jacknifing the estimator, as described in the reference. This can be done using \code{jack.ind}, but preferably using the \code{\link{rdsObjectJacknife}} function.
 }
 
 \note{
@@ -42,8 +46,10 @@ Differences between the functions include:
 A list with the following components:
 \item{call}{The function call.}
 \item{Nk.estimates}{The estimated degree frequencies.}
-\item{log.bk.estimates}{The estimated sampling rates for each degree.}
+\item{log.bk.estimates}{The estimated sampling rates for each degree. In log scale.}
+\item{convergence}{0 if estimation of $Nk$'s converged. Otherwise, 1 or -1, depending on the sign of the derivative of the likelihood w.r.t the sample size. }
 }
+
 
 
 \references{
@@ -51,8 +57,9 @@ A list with the following components:
   }
 
 \seealso{
-  \code{\link{initializeRdsObject}}, \code{\link{makeRdsSample}}, \code{\link{getTheta}}
+  \code{\link{initializeRdsObject}}, \code{\link{makeRdsSample}}, \code{\link{getTheta}}, \code{\link{rdsObjectJacknife}}.
 }
+
 \examples{
 # Import data in RDS file format:
 data(brazil)
@@ -66,7 +73,6 @@ plot(rds.object2$estimates$Nk.estimates, type='h')
 # Population size estimate:
 sum(rds.object2$estimates$Nk.estimates)
 plot(rds.object2$estimates$log.bk.estimates, type='h')
-
 
 ## Recover theta assuming b.k=b_0*k^theta
 getTheta(rds.object2)
