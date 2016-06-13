@@ -14,7 +14,7 @@ Formally, we estimate \eqn{theta} and \eqn{beta_0} assuming that \eqn{beta_k:= b
 }
 
 \arguments{
-  \item{rds.object}{A \code{rds-object} with a \code{estimates} component as returned by \code{\link{estimate.b.k}} }
+  \item{rds.object}{A \code{rds-object} with a \code{estimates} component as returned by \code{\link{Estimate.b.k}} }
   \item{bin}{Bin degree counts. See Note.}
   \item{robust}{Should \eqn{beta_0} and \eqn{theta} be recovered from \eqn{beta_k} using a robust method (default) or not.}
 }
@@ -39,7 +39,9 @@ A list including the following components:
 
 
 \seealso{
-  \code{\link{estimate.b.k}}, \code{\link{initializeRdsObject}}, \code{\link{makeRdsSample}}
+  \code{\link{Estimate.b.k}}, 
+  \code{\link{initializeRdsObject}}, 
+  \code{\link{makeRdsSample}}
 }
 
 \examples{
