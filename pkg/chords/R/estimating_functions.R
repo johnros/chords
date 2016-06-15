@@ -52,21 +52,6 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
   }
   
   
-  else if(type=='integrated'){
-    # Construct target function: 
-    ## Yakir target:  sum(((N.k-n+1):N.k)^-1) - (n+1)*A/(N.k*A-B)
-    target <- function(N.k){
-      pre.const2 <- (N.k - seq(0, n.k.count-1))
-      if(any(pre.const2<0)) return(-Inf) # Deal with impossible N.k:
-      const2 <- sum(1/pre.const2)
-      const1 <- (n.k.count+1)*A.k/(N.k*A.k-B.k)
-      
-      const2- const1
-    }
-  }
-  
-  
-  
   # Estimate n by finding root of target:
   roots <- NULL
   .interval <- n.k.count * c(1, 10*max(1,1/A.k))

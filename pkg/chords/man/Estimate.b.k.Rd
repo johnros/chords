@@ -20,13 +20,13 @@ Estimate.b.k(rds.object, type = "mle", jack.control = NULL)
   \item{type}{
     The type of estimation. Possible values:
     \itemize{
-      \item{mle}{Maximum likelihood.}
-      \item{integrated}{Integrated maximum likelihood.}
-      \item{observed}{Estimate with observed degrees.}
-      \item{jeffreys}{MAP estimation with Jeffreys prior.}
-      \item{parametric}{Assume \eqn{\beta[k]:=\beta * \theta^k}.}
-      \item{rescaling}{Naive rescaling heuristic estimation. }
-      \item{leave-d-out}{Leave-d-out resampling estimator. }
+      \item{mle }{Maximum likelihood.}
+      \item{integrated }{Integrated maximum likelihood.}
+      \item{observed }{Estimate with observed degrees.}
+      \item{jeffreys }{MAP estimation with Jeffreys prior.}
+      \item{parametric }{Assume \eqn{\beta[k]:=\beta * \theta^k}.}
+      \item{rescaling }{Naive rescaling heuristic estimation. }
+      \item{leave-d-out }{Leave-d-out resampling estimator. }
     }
     
 }
