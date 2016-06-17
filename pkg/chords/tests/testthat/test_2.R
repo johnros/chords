@@ -3,7 +3,7 @@ context("testing estimators")
 
 test_that("various estimators", {
   data(brazil)
-  expect_message(rds.object<- initializeRdsObject(brazil))
+  rds.object<- initializeRdsObject(brazil)
   expect_equal(length(rds.object$I.t), 303)
   rds.object2 <- Estimate.b.k(rds.object = rds.object )
   expect_equal(length(rds.object2$estimates),10)
@@ -24,9 +24,7 @@ test_that("various estimators", {
   expect_equal(length(rds.object5$estimates),10)
   expect_equal(sum(rds.object5$estimates$Nk.estimates<Inf), 997)
   
-  rds.object.6 <- Estimate.b.k(rds.object = rds.object2, type='rescaling')
-  rds.object.5$estimates$Nk.estimates
-  see(rds.object.5) # will not work. less than 2 converging estimates.
-  
+  rds.object6 <- Estimate.b.k(rds.object = rds.object2, type='rescaling')
+  expect_equal(sum(rds.object6$estimates$Nk.estimates<Inf), 999)
   
 })
