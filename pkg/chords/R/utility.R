@@ -48,7 +48,7 @@ makeRDSExample <- function(){
     sample.length = sample.length)
 }
 ## Testing:
-# chords:::makeRdsExample()
+# length(chords:::makeRDSExample())
 
 
 
@@ -143,7 +143,7 @@ rdsObjectConstructor <- function(rds.sample=NULL,
   return(result)
 }
 ## Testing
-# rdsObjectConstructor()
+# length(rdsObjectConstructor())
 
 
 
