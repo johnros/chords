@@ -61,27 +61,28 @@ abline(v=median(nvec, na.rm = TRUE), lty=2)
 table(converged)
 
 # Try various re-estimatinons:
+see <- function(x) plot(x$estimates$Nk.estimates, type='h')
 rds.object2 <- simlist[[which(is.infinite(nvec))[1]]]
 
 rds.object <- Estimate.b.k(rds.object = rds.object2 )
-see(rds.object)
 rds.object$estimates$Nk.estimates
+see(rds.object)
 
 rds.object.5 <- Estimate.b.k(rds.object = rds.object, type='rescaling')
-see(rds.object.5) # will not work. less than 2 converging estimates.
 rds.object.5$estimates$Nk.estimates
+see(rds.object.5) # will not work. less than 2 converging estimates.
 
 rds.object.6 <- Estimate.b.k(rds.object = rds.object, type='parametric')
-see(rds.object.6) # will not work. less than 2 converging estimates.
 rds.object.6$estimates$Nk.estimates
+see(rds.object.6) # will not work. less than 2 converging estimates.
 
 
 jack.control <- makeJackControl(3, 1e2)
 rds.object.7 <- Estimate.b.k(rds.object = rds.object, 
                              type='leave-d-out', 
                              jack.control = jack.control)
-see(rds.object.7)
 rds.object.7$estimates$Nk.estimates
+see(rds.object.7)
 
 
 rds.object.8 <- Estimate.b.k(rds.object = rds.object, type='integrated')

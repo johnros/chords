@@ -286,7 +286,6 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
     roots <- uniroot(f = target, interval =.interval, extendInt = "no", maxiter = 1e4), 
     silent = TRUE
     )
-  result$N.k <- ceiling(result$N.k)
   
   # Indicate type of convergence:
   if(length(roots)>0) {
@@ -303,6 +302,8 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
   }
   else warning('Could not compute estimator nor gradient. Returning NA.')
   
+  
+  
   # Re estimate if not converged:
   if(result$converge==1 && type.switch=='integrated'){
       result <- Recall(k=k, 
@@ -315,13 +316,13 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
                      type='integrated2')
   }
   
+  result$N.k <- ceiling(result$N.k)
   return(result)
 }
 ## Testing:
 # save(n.k, k.ind,A.k, B.k, file='temp/testing_setup.RData')
 # load(file='temp/testing_setup.RData')
-# chords:::estimate.b.k.2(k = 3, A.k = A.k, B.k = B.k, n.k =n.k, n.k.count = n.k.count, delete.ind = NULL, 
-#                         type='mle' )
+# chords:::estimate.b.k.2(k = 3, A.k = A.k, B.k = B.k, n.k =n.k, n.k.count = n.k.count, delete.ind = NULL, type='mle' )
 
 
 

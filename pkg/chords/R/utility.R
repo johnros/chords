@@ -117,9 +117,10 @@ makeSnowBall <- function(rds.sample, seeds){
               degree.out=degree.out))
 }
 # ## Testing:
-# test.snowball <- chords:::makeSnowBall(rds.sample, seeds=1)
+# rds.sample <- makeRDSExample()
+# test.snowball <- makeSnowBall(rds.sample$rds.sample, seeds=1)
 # str(test.snowball)
-# table(rds.sample$NS1)
+# length(rds.sample$rds.sample$NS1)
 # table(test.snowball$degree.in)
 # table(test.snowball$degree.out)
 
