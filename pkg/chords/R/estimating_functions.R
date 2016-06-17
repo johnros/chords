@@ -21,13 +21,11 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     result <- estimate.b.k(rds.object = rds.object, type='integrated')  
   }
   
-  
-  else if(type=='integrated2'){
-    ## TODO: allow 'integrated' only on non converging degrees. 
-  }
-  
   # Impute using observed degrees
   else if(type=='observed'){
+    if (length(rds.object$estimates)==0) {
+      stop('Initial estimates in the rds-objcet for this type of estimation.')
+    }
     result$Nk.estimates[imput.ind] <- result$n.k.counts[imput.ind]
   }
   
@@ -38,12 +36,20 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   
   # Parametric smoothing using beta[k] = beta*theta^k:
   else if(type=='parametric'){
+    if (length(rds.object$estimates)==0) {
+      stop('Initial estimates in the rds-objcet for this type of estimation.')
+    }
+    
     imput.ind <- which(is.finite(result$log.bk.estimates) & !is.na(result$log.bk.estimates))# estimates to impute:
     result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
   }
   
   # Impute using a naive rescaling heuristic
   else if(type=='rescaling'){
+    if (length(rds.object$estimates)==0) {
+      stop('Initial estimates in the rds-objcet for this type of estimation.')
+    }
+    
     result$Nk.estimates <- imputeEstimates(result$Nk.estimates, result$n.k.counts, result$convergence)
   }
   
@@ -53,7 +59,6 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     # delete a random subset of d observations (not necesarily from missing degree!)
     # repeat process B times.
     # return the degree-wise median of the converging repeats
-    
     
     stopifnot(class(jack.control)=='jack.control')
     d <- jack.control$d # number of observation to drop

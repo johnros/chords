@@ -37,6 +37,9 @@ Estimate.b.k(rds.object, type = "mle", jack.control = NULL)
 \details{
 As of version 0.95, this function is the main workhorse of the \code{chords} package. 
 Given an \code{rds-class} object, it will return population size estimates for each degree. 
+Note that for the \code{rescaling} and \code{parametric} estimators, the input \code{rds-object} is expected to contain some initial estimate in the \code{estimates} slot. 
+
+
 See the reference for a description of the likelihood problem solved.
 Optimization is performed by noting that likelihood is coordinate-wise convex, thus amounts to a series of line-searches.
 
