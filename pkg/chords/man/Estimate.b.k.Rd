@@ -5,7 +5,7 @@
   RDS population size estimation
 }
 \description{
-Estimate population size from respondant driven samples (RDS) using maximum likelihood, and several variation. 
+Estimate population size from respondent driven samples (RDS) using maximum likelihood, and several variation. 
 The underlying idea is that the sample spreads like an epidemic in the target population as described in the reference.
 
 }
@@ -15,18 +15,18 @@ Estimate.b.k(rds.object, type = "mle", jack.control = NULL)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{rds.object}{
-    A object of class \code{rds-object} as constructed by \code{\link{initializeRdsObject}}
+    A object of class \code{rds-object} as constructed by \code{\link{initializeRdsObject}} or outputted by \code{Estimate.b.k} (depending on the \code{type} used).
 }
   \item{type}{
-    The type of estimation. Possible values:
+    A character vector with the type of estimation. Possible values:
     \itemize{
-      \item{mle }{Maximum likelihood.}
-      \item{integrated }{Integrated maximum likelihood.}
-      \item{observed }{Estimate with observed degrees.}
-      \item{jeffreys }{MAP estimation with Jeffreys prior.}
-      \item{parametric }{Assume \eqn{\beta[k]:=\beta * \theta^k}.}
-      \item{rescaling }{Naive rescaling heuristic estimation. }
-      \item{leave-d-out }{Leave-d-out resampling estimator. }
+      \item{\strong{mle} }{Maximum likelihood.}
+      \item{\strong{integrated} }{Integrated maximum likelihood.}
+      \item{\strong{observed} }{Estimate with observed degrees.}
+      \item{\strong{jeffreys} }{MAP estimation with Jeffreys prior.}
+      \item{\strong{parametric} }{Assume \eqn{\beta[k]:=\beta * \theta^k}.}
+      \item{\strong{rescaling} }{Naive rescaling heuristic estimation. }
+      \item{\strong{leave-d-out} }{Leave-d-out resampling estimator. }
     }
     
 }
@@ -46,7 +46,7 @@ Optimization is performed by noting that likelihood is coordinate-wise convex, t
 }
 \value{
 An \code{rds-class} object with an updated \code{estimates} slot.
-The \code{estiamtes} slot is \code{list} with the following comonents:
+The \code{estiamtes} slot is \code{list} with the following components:
   \item{call}{The function call.}
   \item{Nk.estimates}{The estimated degree frequencies.}
   \item{log.bk.estimates}{The estimated sampling rates for each degree. In log scale.}

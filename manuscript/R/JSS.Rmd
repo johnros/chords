@@ -7,51 +7,40 @@ output: html_document
 
 # Brazil Data Analysis
 
+## MLE
 ```{r}
 library(magrittr)
+library(chords)
 # Import data in RDS file format:
 data(brazil)
 # Initialize RDS object:
 rds.object<- initializeRdsObject(brazil)
-# Estimate:
-rds.object$estimates <- estimate.b.k(rds.object = rds.object )
+# MLE Estimate:
+rds.object <- Estimate.b.k(rds.object = rds.object )
+
+# Get estimates:
+plot(rds.object$estimates$Nk.estimates, type='h')
+table(rds.object$estimates$Nk.estimates)
 
 # How many degrees were imputed?:
 table(rds.object$estimates$convergence)
-table(rds.object$estimates$Nk.estimates)
 
-## Recover theta assuming b.k=b_0*k^theta
+# Recover theta assuming b.k=b_0*k^theta
 getTheta(rds.object)
+```
 
+## Integrated MLE
+```{r}
 
-# Jacknife estimation of non-converging degrees
-convergence <- rds.object$estimates$convergence
-jack <- which(convergence>0)
-Nks <- rds.object$estimates$Nk.estimates
-jack.Nks <- names(Nks)[jack] %>% as.numeric
-jack.ind <- rds.object$degree.in %in% jack.Nks
-# jack.ind <- rep(TRUE, nrow(rds.object$rds.sample))
-N <- sum(jack.ind)
-n.jack <- rep(NA, N-1)
-for(j in seq_along(jack.ind)){
-  # j <- 1
-  i <- which(jack.ind)[j]
-  rds.jack <- rdsObjectJacknife(rds.object, i)
-  rds.jack.estim <- estimate.b.k(rds.jack)  
-  n.jack[j] <- sum(rds.jack.estim$Nk.estimates)
-}
-n.jack
-median(n.jack[n.jack<Inf], na.rm=TRUE)
+```
 
-
-
-# View estimates:
-plot(rds.object$estimates$Nk.estimates, type='h')
-sum(rds.object$estimates$Nk.estimates)
-plot(rds.object$estimates$log.bk.estimates, type='h')
-
-
+## Delete-d 
+```{r}
 # Delete k estimator:
+jack.control <- makeJackControl(3,1e3)
+rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out')
+
+
 n.deletions <- 1e3
 N <- length(rds.object$I.t)
 
@@ -65,7 +54,12 @@ n.jack
 1/(mean(1/n.jack))
 
 
+
 ```
+
+## Parametric smoothing
+
+## Heuristic scaling
 
 
 
