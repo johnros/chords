@@ -395,6 +395,21 @@ thetaSmoothingNks <- function(rds.object, bin=1){
 
 
 
+## Create snowball matrix
+makeNKT <- function(uniques, degree.in, degree.out){
+  result <- matrix(NA, 
+                   nrow=length(uniques), 
+                   ncol=length(degree.out), 
+                   dimnames=list(k=NULL, t=NULL))
+  for(i in seq_along(uniques)){
+   result[i,] <- cumsum(degree.in==uniques[i])
+  }
+  return(result)
+}
+## Testing:
+# makeNKT(uniques, degree.in, degree.out)
+
+
 
 
 likelihood <- function(

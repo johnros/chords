@@ -1,9 +1,8 @@
-#import(graphics)
-#import(stats)
-#import(utils)
+import(stats)
+importFrom(utils, head)
+importFrom(graphics, plot, points)
 importFrom(MASS, rlm)
 importFrom(Matrix, sparseMatrix)
-
 export(initializeRdsObject)
 export(Estimate.b.k)
 export(getTheta)

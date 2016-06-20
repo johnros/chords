@@ -7,5 +7,5 @@ Author: Jonathan Rosenblatt
 Maintainer: Jonathan Rosenblatt <johnros@bgu.ac.il>
 Description: Maximum likelihood estimation in respondent driven samples.
 License: GPL-2
-Imports: MASS, magrittr
+Imports: MASS, Matrix
 Suggests: testthat

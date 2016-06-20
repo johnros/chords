@@ -16,7 +16,7 @@ updateLambdas <- function(N.k, n.k, b.k, I.t){
 # example(makeRdsSample)
 # lambda.k <- chords:::updateLambdas(
 #   N.k =true.Nks ,
-#   n.k = rep(0, length.out = length(true.Nks)), 
+#   n.k = rep(0, length.out = length(true.Nks)),
 #   b.k =true.log.bks+log(100) ,
 #   I.t=1)
 # plot(lambda.k, type='h')
@@ -141,7 +141,7 @@ makeSparseMatrix <- function(mean, pop.size, weight.range){
 
 
 makeWeightMatrix <- function(means, pop.size){
-  requireNamespace()(Matrix)
+  stopifnot(length(means)==2)
   
   weak.mean <- means['weak']
   strong.mean <- means['strong']
@@ -154,71 +154,11 @@ makeWeightMatrix <- function(means, pop.size){
 ## Testing:
 # pop.size <- 2e3
 # means <- c(weak=10, strong=2)
-# .test <- chords:::makeWeightMatrix(means, pop.size)
-# .test %>% dim
-# Matrix::isSymmetric(.test) 
-
-
-# Sketch:
-## Get population A, and indices of sampled nodes
-## Compute sum of weights from snowball to population.
-## return vector of weights
-updateLambdaNetwork <- function(A, lambdas, indices.snowball, indices.t){
-  out <- A[indices.snowball,indices.t]
-  enter <- 
-    A[-indices.snowball, indices.t] %>% 
-  result <-   lambdas + enter -out  
-}
-## Testing
-# pop.size <- 2e3
-# means <- c(weak=10, strong=2)
-# A <- chords:::makeWeightMatrix(means, pop.size)
-# indices.snowball <- sample(pop.size, 200)
-# indices.t <- sample(pop.size, 1)
+# .test <- makeWeightMatrix(means, pop.size)
+# dim(.test)
 
 
 
 
-# generate sample:
-makeWeakStrongSample <- function (means, pop.size, sample.length) {
-  weights <- makeWeightMatrix(pop.size, means)
-  
-  ## Initiate object:
-  n.ks <- rep(0, length(N.k))
-  event.time <- 0
-  I.t <- 1  
-  rds.object.simulated <- rdsObjectConstructor(
-    rds.sample = data.frame(NS1=rep(NA, sample.length), 
-                            interviewDt=rep(NA, sample.length)),
-    I.t = rep(NA, sample.length),
-    degree.in = rep(0, sample.length),
-    degree.out = rep(0, sample.length))
-  
-  
-  ## Construct population:  
-  A <- makeWeightMatrix(means, pop.size)
-  
-  ## Construct sample
-  for(period in seq_len(sample.length)){
-    ## Update sample
-    ## TODO: finish sampling
-    lambdas <- updateLambdaNetwork(A)
-    time.to.event <- rexp(1, sum(lambda.k))
-    event.time <- event.time + time.to.event
-    event.type <- rmultinom(1, 1, prob = lambda.k)
-    in.degree <-  which(as.logical(event.type))
-    n.ks <- n.ks + event.type  
-    I.t <- I.t+1
-    
-    
-    ## Update RDSObject
-    rds.object.simulated$rds.sample$interviewDt[period] <- event.time
-    rds.object.simulated$degree.in[period] <- in.degree
-    rds.object.simulated$I.t[period] <- I.t
-    rds.object.simulated$rds.sample$NS1[period] <- in.degree
-  }
-  return(rds.object.simulated)
-}
-## Testing:
-# rds.simulated.object <- makeRdsSample(N.k =N.k , sample.length = 900L)
-# plot(rds.simulated.object$rds.object$rds.sample$interviewDt)
+
+
