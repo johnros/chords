@@ -17,12 +17,14 @@ head(brazil)
 
 # Initialize RDS object:
 rds.object<- initializeRdsObject(brazil)
+
 # MLE Estimate:
 rds.object <- Estimate.b.k(rds.object = rds.object )
 
 # Get estimates:
-plot(rds.object$estimates$Nk.estimates, type='h')
-table(rds.object$estimates$Nk.estimates)
+estimate.1 <- rds.object$estimates$Nk.estimates
+plot(estimate.1, type='h')
+table(estimate.1)
 
 # How many degrees were imputed?:
 table(rds.object$estimates$convergence)
@@ -59,12 +61,125 @@ estimate.4 <- rds.object.4$estimates$Nk.estimates
 plot(estimate.4, type='h')
 table(estimate.4)
 sum(estimate.4)
-
 ```
 
 
 ## Heuristic scaling
+```{r}
+rds.object.5 <- Estimate.b.k(rds.object, type='rescaling')
 
+estimate.5 <- rds.object.5$estimates$Nk.estimates
+plot(estimate.5, type='h')
+table(estimate.5)
+sum(estimate.5)
+```
+
+
+## Jeffrey's Prior
+```{r}
+rds.object.6 <- Estimate.b.k(rds.object, type='jeffreys')
+
+estimate.6 <- rds.object.6$estimates$Nk.estimates
+plot(estimate.6, type='h')
+table(estimate.6)
+sum(estimate.6)
+```
+
+
+
+# Simulated Data Analysis
+
+## Simulate data
+```{r make data}
+dk <- c(2, 1e1) # unique degree classes
+true.dks <- rep(0,max(dk)); true.dks[dk] <- dk
+true.Nks <- rep(0,max(dk)); true.Nks[dk] <- 1e3
+beta <- 1 #5e-6
+theta <-  0.1
+true.log.bks <- rep(-Inf, max(dk))
+true.log.bks[dk] <- theta*log(beta*dk)
+sample.length <- 4e2
+nsims <- 1e2
+
+simlist <- list()
+for(i in 1:nsims){
+  simlist[[i]] <- makeRdsSample(
+    N.k =true.Nks , 
+    b.k = exp(true.log.bks),
+    sample.length = sample.length)
+}
+```
+
+
+## MLE
+```{r}
+nvec <- rep(NA, nsims)
+converged<- rep(NA, nsims)
+thetas<- rep(NA, nsims)
+for(i in 1:nsims){
+  simlist[[i]] <- Estimate.b.k(rds.object = simlist[[i]])
+  nvec[i] <- sum(simlist[[i]]$estimates$Nk.estimates)
+  converged[i] <- sum(simlist[[i]]$estimates$convergence, na.rm=TRUE)
+  thetas[i] <- getTheta(simlist[[i]]$estimates$convergence, na.rm=TRUE)
+}
+
+hist(nvec)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec, na.rm = TRUE), lty=2) # Median of estimated population size
+
+```
+
+## Delete-d 
+```{r}
+jack.control <- makeJackControl(3, 1e2)
+rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out', jack.control = jack.control)
+
+estimate.2 <- rds.object.2$estimates$Nk.estimates
+table(estimate.2)
+sum(estimate.2)
+```
+
+## Parametric smoothing
+```{r}
+rds.object.3 <- Estimate.b.k(rds.object, type='parametric')
+
+estimate.3 <- rds.object.3$estimates$Nk.estimates
+plot(estimate.3, type='h')
+table(estimate.3)
+sum(estimate.3[estimate.3<Inf])
+```
+
+## Integrated MLE
+```{r}
+rds.object.4 <- Estimate.b.k(rds.object, type='integrated')
+
+estimate.4 <- rds.object.4$estimates$Nk.estimates
+plot(estimate.4, type='h')
+table(estimate.4)
+sum(estimate.4)
+```
+
+
+## Heuristic scaling
+```{r}
+rds.object.5 <- Estimate.b.k(rds.object, type='rescaling')
+
+estimate.5 <- rds.object.5$estimates$Nk.estimates
+plot(estimate.5, type='h')
+table(estimate.5)
+sum(estimate.5)
+```
+
+
+## Jeffrey's Prior
+```{r}
+rds.object.6 <- Estimate.b.k(rds.object, type='jeffreys')
+
+estimate.6 <- rds.object.6$estimates$Nk.estimates
+plot(estimate.6, type='h')
+table(estimate.6)
+sum(estimate.6)
+```
 
 
 

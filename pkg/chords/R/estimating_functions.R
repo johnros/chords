@@ -3,13 +3,10 @@
 # Main dispatching function RDS estimation 
 Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   
-  ### Verifications:
-  if(length(rds.object$estimates)>0) {
-    message('RDS object has existing estimates. Overwriting.')  
-  }
-  
+  ### Initializing:
   result <- rds.object$estimates
   imput.ind <- which(result$convergence==1)
+  
   
   # Vanilla MLE estimation:
   if(type=='mle'){
@@ -24,7 +21,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   # Impute using observed degrees
   else if(type=='observed'){
     if (length(rds.object$estimates)==0) {
-      stop('Initial estimates in the rds-objcet for this type of estimation.')
+      stop('Initial estimates required in the rds-objcet for this type of estimation.')
     }
     result$Nk.estimates[imput.ind] <- result$n.k.counts[imput.ind]
   }
@@ -48,7 +45,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   # Impute using a naive rescaling heuristic
   else if(type=='rescaling'){
     if (length(rds.object$estimates)==0) {
-      stop('Initial estimates in the rds-objcet for this type of estimation.')
+      stop('Initial estimates required in the rds-object for this type of estimation.')
     }
     
     result$Nk.estimates <- imputeEstimates(result$Nk.estimates, result$n.k.counts, result$convergence)

@@ -5,7 +5,7 @@
   Smooth estimates degree frequencies.
 }
 \description{
-  Smoothes estimated \eqn{N_k} by assuming that \eqn{beta_k=beta_0 * k^theta}.
+  Smoothes estimated \eqn{N_k} by assuming that \eqn{\beta_k=\beta_0 * k^\theta}.
 }
 \usage{
   thetaSmoothingNks(rds.object,...)

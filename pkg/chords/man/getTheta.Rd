@@ -6,7 +6,7 @@ Recover the "discoverability coefficient".
 }
 \description{
 Estimates the effect of the degree on the rate of sampling. Also known as the "coefficient of discoverability" in the oil-discovery literature [2].
-Formally, we estimate \eqn{theta} and \eqn{beta_0} assuming that \eqn{beta_k:= beta_0 * k^theta}.
+Formally, we estimate \eqn{\theta} and \eqn{\beta_0} assuming that \eqn{\beta_k:= \beta_0 * k^\theta}.
 }
 
 \usage{
@@ -16,7 +16,7 @@ Formally, we estimate \eqn{theta} and \eqn{beta_0} assuming that \eqn{beta_k:= b
 \arguments{
   \item{rds.object}{A \code{rds-object} with a \code{estimates} component as returned by \code{\link{Estimate.b.k}} }
   \item{bin}{Bin degree counts. See Note.}
-  \item{robust}{Should \eqn{beta_0} and \eqn{theta} be recovered from \eqn{beta_k} using a robust method (default) or not.}
+  \item{robust}{Should \eqn{\beta_0} and \eqn{\theta} be recovered from \eqn{\beta_k} using a robust method (default) or not.}
 }
 
 
@@ -27,8 +27,8 @@ If degree counts have been binned by \code{\link{initializeRdsObject}} (for vari
 
 \value{
 A list including the following components:
-\item{log.beta_0}{The log of \eqn{beta_0} in \eqn{beta_k:= beta_0 * k^theta}.}
-\item{theta}{\eqn{theta} in \eqn{beta_k:= beta_0 * k^theta}.}
+\item{log.beta_0}{The log of \eqn{\beta_0} in \eqn{\beta_k:= \beta_0 * k^\theta}.}
+\item{theta}{\eqn{\theta} in \eqn{\beta_k:= \beta_0 * k^\theta}.}
 }
 
 \references{
