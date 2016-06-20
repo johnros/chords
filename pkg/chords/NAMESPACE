@@ -10,6 +10,5 @@ export(Estimate.b.k)
 export(getTheta)
 export(makeRdsSample)
 export(thetaSmoothingNks)
-export(rdsObjectJacknife)
 export(makeJackControl)
 

@@ -32,7 +32,6 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   }
   
   # Parametric smoothing using beta[k] = beta*theta^k:
-  # TODO: impute Inf value of Nks.
   else if(type=='parametric'){
     if (length(rds.object$estimates)==0) stop('Initial estimates in the rds-objcet for this type of estimation.')
     
@@ -50,7 +49,6 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   }
   
   # delete-d resampling:
-  ## TODO: why does delete-d estimates unobseved degrees?
   else if(type=='leave-d-out'){
     ## Sketch:
     # delete a random subset of d observations (not necesarily from missing degree!)

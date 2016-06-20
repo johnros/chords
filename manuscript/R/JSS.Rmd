@@ -94,15 +94,16 @@ sum(estimate.6)
 
 # Simulated Data Analysis
 
+## Large Sample
 
-## Simulate data
+### Simulate data
 ```{r make data}
 dk <- c(2, 5, 10, 20) # unique degree classes
 true.dks <- rep(0,max(dk))
 true.dks[dk] <- dk
 true.Nks <- rep(0,max(dk))
 true.Nks[dk] <- 1e3
-beta <- 1e #5e-6
+beta <- 1 #5e-6
 theta <-  0.1
 true.log.bks <- rep(-Inf, max(dk))
 true.log.bks[dk] <- theta*log(beta*dk)
@@ -119,7 +120,7 @@ for(i in 1:nsims){
 ```
 
 
-## MLE
+### MLE
 ```{r}
 nvec.1 <- rep(NA, nsims)
 converged.1<- rep(NA, nsims)
@@ -136,7 +137,7 @@ abline(v=median(nvec.1, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Parametric smoothing
+### Parametric smoothing
 ```{r}
 nvec.3 <- rep(NA, nsims)
 converged.3<- rep(NA, nsims)
@@ -155,17 +156,15 @@ abline(v=median(nvec.3, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Integrated MLE
+### Integrated MLE
 ```{r}
 nvec.4 <- rep(NA, nsims)
 converged.4<- rep(NA, nsims)
 simlist.4 <- NULL
 for(i in 1:nsims){
-  try({
   simlist.4[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='integrated')
   nvec.4[i] <- sum(simlist.4[[i]]$estimates$Nk.estimates)
   converged.4[i] <- sum(simlist.4[[i]]$estimates$convergence, na.rm=TRUE)      
-  })
 }
 
 hist(nvec.4)
@@ -174,7 +173,7 @@ abline(v=median(nvec.4, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Heuristic scaling
+### Heuristic scaling
 ```{r}
 nvec.5 <- rep(NA, nsims)
 converged.5<- rep(NA, nsims)
@@ -193,7 +192,7 @@ abline(v=median(nvec.5, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Jeffrey's Prior
+### Jeffrey's Prior
 ```{r}
 nvec.6 <- rep(NA, nsims)
 converged.6<- rep(NA, nsims)
@@ -212,7 +211,7 @@ abline(v=median(nvec.6, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Observed
+### Observed
 ```{r}
 nvec.7 <- rep(NA, nsims)
 converged.7<- rep(NA, nsims)
@@ -231,9 +230,9 @@ abline(v=median(nvec.7, na.rm = TRUE), lty=2, lwd=2) # Median of estimated popul
 ```
 
 
-## Delete-d 
+### Delete-d 
 ```{r}
-jack.control <- makeJackControl(d = 5e1, B = 2e2)
+jack.control <- makeJackControl(d = 3, B = 1e2)
 
 nvec.2 <- rep(NA, nsims)
 converged.2<- rep(NA, nsims)
@@ -244,8 +243,156 @@ for(i in 1:nsims){
   converged.2[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
 }
 
-hist(nvec.2, xlim=c(5e2,4e3))
+hist(nvec.2)
 abline(v=sum(true.Nks), col='red') # True population size
 abline(v=median(nvec.2, na.rm = TRUE), lty=2) # delete-d median
-abline(v=median(nvec.1, na.rm = TRUE), lty=3) # MLE median
 ```
+
+
+
+
+## Small Sample
+
+### Simulate data
+```{r make data}
+sample.length <- 4e2
+nsims <- 1e1
+
+simlist <- list()
+for(i in 1:nsims){
+  simlist[[i]] <- makeRdsSample(
+    N.k =true.Nks , 
+    b.k = exp(true.log.bks),
+    sample.length = sample.length)
+}
+```
+
+
+### MLE
+```{r}
+nvec.1 <- rep(NA, nsims)
+converged.1<- rep(NA, nsims)
+simlist.1 <- NULL
+for(i in 1:nsims){
+  simlist.1[[i]] <- Estimate.b.k(rds.object = simlist[[i]])
+  nvec.1[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
+  converged.1[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
+}
+
+hist(nvec.1)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.1[nvec.1<Inf]), lty=2) # Median of estimated population size
+```
+
+
+### Parametric smoothing
+```{r}
+nvec.3 <- rep(NA, nsims)
+converged.3<- rep(NA, nsims)
+simlist.3 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.3[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='parametric')
+  nvec.3[i] <- sum(simlist.3[[i]]$estimates$Nk.estimates)
+  converged.3[i] <- sum(simlist.3[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
+
+hist(nvec.3)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.3, na.rm = TRUE), lty=2) # Median of estimated population size
+```
+
+
+### Integrated MLE
+```{r}
+nvec.4 <- rep(NA, nsims)
+converged.4<- rep(NA, nsims)
+simlist.4 <- NULL
+for(i in 1:nsims){
+  simlist.4[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='integrated')
+  nvec.4[i] <- sum(simlist.4[[i]]$estimates$Nk.estimates)
+  converged.4[i] <- sum(simlist.4[[i]]$estimates$convergence, na.rm=TRUE)      
+}
+
+hist(nvec.4)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.4, na.rm = TRUE), lty=2) # Median of estimated population size
+```
+
+
+### Heuristic scaling
+```{r}
+nvec.5 <- rep(NA, nsims)
+converged.5<- rep(NA, nsims)
+simlist.5 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.5[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='rescaling')
+  nvec.5[i] <- sum(simlist.5[[i]]$estimates$Nk.estimates)
+  converged.5[i] <- sum(simlist.5[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
+
+hist(nvec.5)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.5, na.rm = TRUE), lty=2) # Median of estimated population size
+```
+
+
+### Jeffrey's Prior
+```{r}
+nvec.6 <- rep(NA, nsims)
+converged.6<- rep(NA, nsims)
+simlist.6 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.6[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='jeffreys')
+  nvec.6[i] <- sum(simlist.6[[i]]$estimates$Nk.estimates)
+  converged.6[i] <- sum(simlist.6[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
+
+hist(nvec.6)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.6, na.rm = TRUE), lty=2) # Median of estimated population size
+```
+
+
+### Observed
+```{r}
+nvec.7 <- rep(NA, nsims)
+converged.7<- rep(NA, nsims)
+simlist.7 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.7[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='observed')
+  nvec.7[i] <- sum(simlist.7[[i]]$estimates$Nk.estimates)
+  converged.7[i] <- sum(simlist.7[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
+
+hist(nvec.7)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.7, na.rm = TRUE), lty=2, lwd=2) # Median of estimated population size
+```
+
+
+### Delete-d 
+```{r}
+jack.control <- makeJackControl(d = 3, B = 1e2)
+
+nvec.2 <- rep(NA, nsims)
+converged.2<- rep(NA, nsims)
+simlist.2 <- NULL
+for(i in 1:nsims){
+  simlist.2[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='leave-d-out', jack.control)
+  nvec.2[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
+  converged.2[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
+}
+
+hist(nvec.2)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.2[nvec.2<Inf], na.rm = TRUE), lty=2) # delete-d median
+```
+
