@@ -29,6 +29,7 @@ rds.object <- Estimate.b.k(rds.object = rds.object )
 estimate.1 <- rds.object$estimates$Nk.estimates
 plot(estimate.1, type='h')
 table(estimate.1)
+sum(estimate.1[estimate.1<Inf])
 
 # How many degrees were imputed?:
 table(rds.object$estimates$convergence)
@@ -39,7 +40,7 @@ getTheta(rds.object)
 
 ## Delete-d 
 ```{r}
-jack.control <- makeJackControl(3, 1e2)
+jack.control <- makeJackControl(1, 1e2)
 rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out', jack.control = jack.control)
 
 estimate.2 <- rds.object.2$estimates$Nk.estimates
