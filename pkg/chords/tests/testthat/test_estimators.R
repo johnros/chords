@@ -27,8 +27,9 @@ test_that("various estimators", {
   rds.object5 <- Estimate.b.k(rds.object = rds.object2, type = 'parametric')
   expect_equal(length(rds.object5$estimates),10)
   expect_equal(sum(rds.object5$estimates$Nk.estimates<Inf), 999)
+  expect_equal(names(rds.object5$estimates$Nk.estimates), the.names)
   
   rds.object6 <- Estimate.b.k(rds.object = rds.object2, type='rescaling')
   expect_equal(sum(rds.object6$estimates$Nk.estimates<Inf), 999)
-  
+  expect_equal(names(rds.object6$estimates$Nk.estimates), the.names)
 })

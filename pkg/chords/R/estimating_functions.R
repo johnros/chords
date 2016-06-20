@@ -34,9 +34,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   # Parametric smoothing using beta[k] = beta*theta^k:
   # TODO: impute Inf value of Nks.
   else if(type=='parametric'){
-    if (length(rds.object$estimates)==0) {
-      stop('Initial estimates in the rds-objcet for this type of estimation.')
-    }
+    if (length(rds.object$estimates)==0) stop('Initial estimates in the rds-objcet for this type of estimation.')
     
     imput.ind <- which(!is.na(result$log.bk.estimates))# estimates to impute:
     result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
@@ -102,6 +100,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
                                   arrival.intervals = result$arrival.intervals, 
                                   arrival.degree = result$arrival.degree)
   
+  result$Nk.estimates <- ceiling(result$Nk.estimates)
   rds.object$estimates <- result
   return(rds.object)    					
 }
@@ -327,7 +326,6 @@ estimate.b.k.2 <- function(k, A.k, B.k, n.k, n.k.count, k.ind, delete.ind, type)
                      type='integrated2')
   }
   
-  result$N.k <- ceiling(result$N.k)
   return(result)
 }
 ## Testing:
