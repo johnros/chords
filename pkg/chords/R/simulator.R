@@ -117,13 +117,13 @@ compareNkEstimate <- function(Nk1, Nk2){
 # Generate aquiantance network:
 makeSparseMatrix <- function(mean, pop.size, weight.range){
   weak.prob <- mean/pop.size
-  weak.edge.index <- rbinom(choose(pop.size, 2), 1, weak.prob) %>%
-    as.logical %>%
-    which %>%
-    arrayInd(.dim = c(pop.size, pop.size))
-  weak.edge.index <- weak.edge.index %>% 
-    apply(1, sort) %>% 
-    t
+  weak.edge.index <- arrayInd(
+    which(as.logical(
+      rbinom(choose(pop.size, 2), 1, weak.prob)
+      )),
+  .dim = c(pop.size, pop.size))
+  
+  weak.edge.index <- t(apply(weak.edge.index, 1, sort))
   weak.edges.n <- nrow(weak.edge.index)
   weak.A <- sparseMatrix(i=weak.edge.index[,1],
                          j = weak.edge.index[,2],
@@ -133,11 +133,11 @@ makeSparseMatrix <- function(mean, pop.size, weight.range){
   return(weak.A)  
 }
 ## Testing
-# mean <- 2
-# pop.size <- 2e3
-# weight.range <- 1
-# (chords:::makeSparseMatrix(mean, pop.size, weight.range)!=0) %>% sum
-# Matrix::isSymmetric(chords:::makeSparseMatrix(2, 2e3)!=0) 
+# .m <- 2
+# .pop.size <- 2e3
+# .weight.range <- 1
+# sum(makeSparseMatrix(.m, .pop.size, .weight.range)!=0)
+# Matrix::isSymmetric(chords:::makeSparseMatrix(.m, .pop.size, .weight.range)!=0)
 
 
 makeWeightMatrix <- function(means, pop.size){

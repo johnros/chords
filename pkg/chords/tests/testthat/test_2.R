@@ -19,10 +19,10 @@ test_that("various estimators", {
   # expect_equal(sum(rds.object4$estimates$Nk.estimates, na.rm=TRUE), 1330)
   
   
-  expect_equal(length(thetaSmoothingNks(rds.object2)),28)
+  expect_equal(length(thetaSmoothingNks(rds.object2)),32)
   rds.object5 <- Estimate.b.k(rds.object = rds.object2, type = 'parametric')
   expect_equal(length(rds.object5$estimates),10)
-  expect_equal(sum(rds.object5$estimates$Nk.estimates<Inf), 997)
+  expect_equal(sum(rds.object5$estimates$Nk.estimates<Inf), 999)
   
   rds.object6 <- Estimate.b.k(rds.object = rds.object2, type='rescaling')
   expect_equal(sum(rds.object6$estimates$Nk.estimates<Inf), 999)
