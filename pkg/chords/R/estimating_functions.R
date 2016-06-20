@@ -52,6 +52,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   }
   
   # delete-d resampling:
+  ## TODO: why does delete-d estimates unobseved degrees?
   else if(type=='leave-d-out'){
     ## Sketch:
     # delete a random subset of d observations (not necesarily from missing degree!)
@@ -60,10 +61,10 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     
     ## Verifications
     if(is.null(result)) stop('Initial estimates required in the rds-object for this type of estimation.')
-    message('If resampling takes too long, try reducing B, or write the author for a parallelized version.')
     stopifnot(class(jack.control)=='jack.control')
     
     ## Initialization
+    message('If resampling takes too long, try reducing B, or write the author for a parallelized version.')
     d <- jack.control$d # number of observation to drop
     n.deletions <- jack.control$B # number of repeats
     N <- length(rds.object$I.t)

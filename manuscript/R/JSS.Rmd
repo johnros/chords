@@ -52,8 +52,8 @@ sum(estimate.2)
 rds.object.3 <- Estimate.b.k(rds.object, type='parametric')
 
 estimate.3 <- rds.object.3$estimates$Nk.estimates
-plot(estimate.3, type='h')
 table(estimate.3)
+plot(estimate.3, type='h')
 sum(estimate.3[estimate.3<Inf])
 ```
 
