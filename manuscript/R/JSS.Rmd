@@ -106,7 +106,7 @@ beta <- 1e #5e-6
 theta <-  0.1
 true.log.bks <- rep(-Inf, max(dk))
 true.log.bks[dk] <- theta*log(beta*dk)
-sample.length <- 4e2
+sample.length <- 1e3
 nsims <- 1e1
 
 simlist <- list()
@@ -154,41 +154,81 @@ abline(v=sum(true.Nks), col='red') # True population size
 abline(v=median(nvec.3, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
 
+
 ## Integrated MLE
 ```{r}
-rds.object.4 <- Estimate.b.k(rds.object, type='integrated')
+nvec.4 <- rep(NA, nsims)
+converged.4<- rep(NA, nsims)
+simlist.4 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.4[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='integrated')
+  nvec.4[i] <- sum(simlist.4[[i]]$estimates$Nk.estimates)
+  converged.4[i] <- sum(simlist.4[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
 
-estimate.4 <- rds.object.4$estimates$Nk.estimates
-plot(estimate.4, type='h')
-table(estimate.4)
-sum(estimate.4)
+hist(nvec.4)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.4, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
 
 
 ## Heuristic scaling
 ```{r}
-rds.object.5 <- Estimate.b.k(rds.object, type='rescaling')
+nvec.5 <- rep(NA, nsims)
+converged.5<- rep(NA, nsims)
+simlist.5 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.5[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='rescaling')
+  nvec.5[i] <- sum(simlist.5[[i]]$estimates$Nk.estimates)
+  converged.5[i] <- sum(simlist.5[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
 
-estimate.5 <- rds.object.5$estimates$Nk.estimates
-plot(estimate.5, type='h')
-table(estimate.5)
-sum(estimate.5)
+hist(nvec.5)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.5, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
 
 
 ## Jeffrey's Prior
 ```{r}
-rds.object.6 <- Estimate.b.k(rds.object, type='jeffreys')
+nvec.6 <- rep(NA, nsims)
+converged.6<- rep(NA, nsims)
+simlist.6 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.6[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='jeffreys')
+  nvec.6[i] <- sum(simlist.6[[i]]$estimates$Nk.estimates)
+  converged.6[i] <- sum(simlist.6[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
 
-estimate.6 <- rds.object.6$estimates$Nk.estimates
-plot(estimate.6, type='h')
-table(estimate.6)
-sum(estimate.6)
+hist(nvec.6)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.6, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
 
 
 ## Observed
+```{r}
+nvec.7 <- rep(NA, nsims)
+converged.7<- rep(NA, nsims)
+simlist.7 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.7[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='observed')
+  nvec.7[i] <- sum(simlist.7[[i]]$estimates$Nk.estimates)
+  converged.7[i] <- sum(simlist.7[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
 
+hist(nvec.7)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.7, na.rm = TRUE), lty=2, lwd=2) # Median of estimated population size
+```
 
 
 ## Delete-d 
