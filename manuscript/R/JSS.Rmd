@@ -13,6 +13,8 @@ library(magrittr)
 library(chords)
 # Import data in RDS file format:
 data(brazil)
+head(brazil)
+
 # Initialize RDS object:
 rds.object<- initializeRdsObject(brazil)
 # MLE Estimate:
@@ -29,35 +31,37 @@ table(rds.object$estimates$convergence)
 getTheta(rds.object)
 ```
 
-## Integrated MLE
-```{r}
-
-```
-
 ## Delete-d 
 ```{r}
-# Delete k estimator:
-jack.control <- makeJackControl(3,1e3)
-rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out')
+jack.control <- makeJackControl(3, 1e2)
+rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out', jack.control = jack.control)
 
-
-n.deletions <- 1e3
-N <- length(rds.object$I.t)
-
-n.jack <- rep(NA, n.deletions)
-for(i in 1:n.deletions){
-  deletion <- sample(N, 3)
-  rds.jack.estim <- estimate.b.k(rds.object, jack.ind = deletion, silent=TRUE)  
-  n.jack[i] <- sum(rds.jack.estim$Nk.estimates)
-}
-n.jack
-1/(mean(1/n.jack))
-
-
-
+estimate.2 <- rds.object.2$estimates$Nk.estimates
+table(estimate.2)
+sum(estimate.2)
 ```
 
 ## Parametric smoothing
+```{r}
+rds.object.3 <- Estimate.b.k(rds.object, type='parametric')
+
+estimate.3 <- rds.object.3$estimates$Nk.estimates
+plot(estimate.3, type='h')
+table(estimate.3)
+sum(estimate.3[estimate.3<Inf])
+```
+
+## Integrated MLE
+```{r}
+rds.object.4 <- Estimate.b.k(rds.object, type='integrated')
+
+estimate.4 <- rds.object.4$estimates$Nk.estimates
+plot(estimate.4, type='h')
+table(estimate.4)
+sum(estimate.4)
+
+```
+
 
 ## Heuristic scaling
 

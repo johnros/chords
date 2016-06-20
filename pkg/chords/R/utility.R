@@ -149,7 +149,7 @@ rdsObjectConstructor <- function(rds.sample=NULL,
 
 
 
-
+# TODO: deal with dropout.
 initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
   ## Verification:
   if(any(table(rds.sample[,'interviewDt'])>1)) message('Non unique interview times. Ignoring and proceeding...')

@@ -35,6 +35,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
   }
   
   # Parametric smoothing using beta[k] = beta*theta^k:
+  # TODO: impute Inf value of Nks.
   else if(type=='parametric'){
     if (length(rds.object$estimates)==0) {
       stop('Initial estimates in the rds-objcet for this type of estimation.')
@@ -59,6 +60,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     # delete a random subset of d observations (not necesarily from missing degree!)
     # repeat process B times.
     # return the degree-wise median of the converging repeats
+    message('If resampling takes too long, try reducing B, or write the author for a parallelized version.')
     
     stopifnot(class(jack.control)=='jack.control')
     d <- jack.control$d # number of observation to drop
