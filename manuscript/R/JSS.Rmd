@@ -5,12 +5,17 @@ date: "May 29, 2016"
 output: html_document
 ---
 
+```{r preliminaries}
+library(magrittr)
+library(chords)
+```
+
+
+
 # Brazil Data Analysis
 
 ## MLE
 ```{r}
-library(magrittr)
-library(chords)
 # Import data in RDS file format:
 data(brazil)
 head(brazil)
@@ -91,15 +96,17 @@ sum(estimate.6)
 
 ## Simulate data
 ```{r make data}
-dk <- c(2, 1e1) # unique degree classes
-true.dks <- rep(0,max(dk)); true.dks[dk] <- dk
-true.Nks <- rep(0,max(dk)); true.Nks[dk] <- 1e3
+dk <- c(2, 5, 10) # unique degree classes
+true.dks <- rep(0,max(dk))
+true.dks[dk] <- dk
+true.Nks <- rep(0,max(dk))
+true.Nks[dk] <- 1e3
 beta <- 1 #5e-6
 theta <-  0.1
 true.log.bks <- rep(-Inf, max(dk))
 true.log.bks[dk] <- theta*log(beta*dk)
 sample.length <- 4e2
-nsims <- 1e2
+nsims <- 1e1
 
 simlist <- list()
 for(i in 1:nsims){
@@ -113,24 +120,43 @@ for(i in 1:nsims){
 
 ## MLE
 ```{r}
-nvec <- rep(NA, nsims)
-converged<- rep(NA, nsims)
-thetas<- rep(NA, nsims)
+nvec.1 <- rep(NA, nsims)
+converged.1<- rep(NA, nsims)
+simlist.1 <- NULL
 for(i in 1:nsims){
-  simlist[[i]] <- Estimate.b.k(rds.object = simlist[[i]])
-  nvec[i] <- sum(simlist[[i]]$estimates$Nk.estimates)
-  converged[i] <- sum(simlist[[i]]$estimates$convergence, na.rm=TRUE)
-  thetas[i] <- getTheta(simlist[[i]]$estimates$convergence, na.rm=TRUE)
+  simlist.1[[i]] <- Estimate.b.k(rds.object = simlist[[i]])
+  nvec.1[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
+  converged.1[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
 }
 
-hist(nvec)
+hist(nvec.1)
 abline(v=sum(true.Nks), col='red') # True population size
-abline(v=median(nvec, na.rm = TRUE), lty=2) # Median of estimated population size
-
+abline(v=median(nvec.1, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
+
 
 ## Delete-d 
 ```{r}
+jack.control <- makeJackControl(d = 3,B = 1e2)
+
+nvec.2 <- rep(NA, nsims)
+converged.2<- rep(NA, nsims)
+simlist.2 <- NULL
+for(i in 1:nsims){
+  simlist.2[[i]] <- Estimate.b.k(rds.object = simlist[[i]], type='leave-d-out', jack.control)
+  nvec.2[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
+  converged.2[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
+}
+
+hist(nvec.2)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.2, na.rm = TRUE), lty=2) # delete-d median
+abline(v=median(nvec.1, na.rm = TRUE), lty=3) # MLE median
+
+
+
+
+
 jack.control <- makeJackControl(3, 1e2)
 rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out', jack.control = jack.control)
 

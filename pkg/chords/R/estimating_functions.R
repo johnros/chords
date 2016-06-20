@@ -57,17 +57,21 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     # delete a random subset of d observations (not necesarily from missing degree!)
     # repeat process B times.
     # return the degree-wise median of the converging repeats
-    message('If resampling takes too long, try reducing B, or write the author for a parallelized version.')
     
+    ## Verifications
+    if(is.null(result)) stop('Initial estimates required in the rds-object for this type of estimation.')
+    message('If resampling takes too long, try reducing B, or write the author for a parallelized version.')
     stopifnot(class(jack.control)=='jack.control')
+    
+    ## Initialization
     d <- jack.control$d # number of observation to drop
     n.deletions <- jack.control$B # number of repeats
-    
     N <- length(rds.object$I.t)
     stopifnot(d<N) # verify number of deletion smaller than sample size
     imput.ind <- !is.na(result$convergence)
     n.nks <- sum(imput.ind)
     
+    ## Core
     jack.Nks <- matrix(NA, nrow=n.deletions, ncol=n.nks)
     for(i in 1:n.deletions){
       deletion <- sample(N, d) # select arrivals to remove
