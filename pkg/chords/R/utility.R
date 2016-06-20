@@ -150,7 +150,7 @@ rdsObjectConstructor <- function(rds.sample=NULL,
 
 
 # TODO: deal with dropout.
-initializeRdsObject <- function(rds.sample, bin=1L, seeds=1L){
+initializeRdsObject <- function(rds.sample, bin=1, seeds=1L){
   ## Verification:
   if(any(table(rds.sample[,'interviewDt'])>1)) {
     message('Non unique interview times. Ignoring and proceeding...')
@@ -334,12 +334,19 @@ getTheta <- function(rds.object, bin=1, robust=TRUE){
   
   log.bks <- estimates$log.bk.estimates
   log.ks <- log(seq_along(log.bks)*bin)
-  ok.inds <- is.finite(log.bks) & !is.na(log.bks)
+  data <- data.frame(y=log.bks, x=log.ks)
+  
+  inds.impute <- !is.na(log.bks)
+  inds.ok <- is.finite(log.bks) & inds.impute
+  if(sum(inds.ok)<2) {
+    stop('At least two valid initial estimated required for this estimator.')
+  }
   
   if(robust) {
-    lm.1 <- rlm(log.bks[ok.inds]~log.ks[ok.inds])
-  } else {
-    lm.1 <- lm(log.bks~log.ks)
+    lm.1 <- rlm(y~x, data=data[inds.ok,])
+  } 
+  else {
+    lm.1 <- lm(y~x, data=data[inds.ok,])
   }
   
   coefs <- as.list(coef(lm.1) )
@@ -347,7 +354,8 @@ getTheta <- function(rds.object, bin=1, robust=TRUE){
   return(list(
     log.beta_0 = coefs$`(Intercept)`,
     theta = coefs$log.ks,
-    model=lm.1))
+    model=lm.1,
+    smooth=predict(lm.1, newdata=data[inds.impute,])))
 }
 ## Testing:
 # data(brazil)
@@ -358,17 +366,19 @@ getTheta <- function(rds.object, bin=1, robust=TRUE){
 
 
 ## Recovering Nk with smoothed Nk:
-thetaSmoothingNks <- function(rds.object,...){
+thetaSmoothingNks <- function(rds.object, bin=1){
   estimates <- rds.object$estimates
   log.bks <- estimates$log.bk.estimates
-  ok.inds <- is.finite(log.bks) & !is.na(log.bks)
   
-  theta <- getTheta(rds.object, ...)
-  smooth.bks <- exp(predict(theta$model))
+  impute.inds <- !is.na(log.bks)
+  ok.inds <- is.finite(log.bks) & impute.inds
   
-  A.ks <- estimates$A.ks[ok.inds]
-  B.ks <- estimates$B.ks[ok.inds]
-  n.k.counts  <- estimates$n.k.counts[ok.inds]
+  theta <- getTheta(rds.object, bin=bin)
+  smooth.bks <- exp(theta$smooth)
+  
+  A.ks <- estimates$A.ks[impute.inds]
+  B.ks <- estimates$B.ks[impute.inds]
+  n.k.counts  <- estimates$n.k.counts[impute.inds]
   smooth.Nks <- (n.k.counts/smooth.bks + B.ks)/A.ks
   
   ## FIXME: 

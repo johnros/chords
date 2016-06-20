@@ -94,14 +94,15 @@ sum(estimate.6)
 
 # Simulated Data Analysis
 
+
 ## Simulate data
 ```{r make data}
-dk <- c(2, 5, 10) # unique degree classes
+dk <- c(2, 5, 10, 20) # unique degree classes
 true.dks <- rep(0,max(dk))
 true.dks[dk] <- dk
 true.Nks <- rep(0,max(dk))
 true.Nks[dk] <- 1e3
-beta <- 1 #5e-6
+beta <- 1e #5e-6
 theta <-  0.1
 true.log.bks <- rep(-Inf, max(dk))
 true.log.bks[dk] <- theta*log(beta*dk)
@@ -135,44 +136,22 @@ abline(v=median(nvec.1, na.rm = TRUE), lty=2) # Median of estimated population s
 ```
 
 
-## Delete-d 
-```{r}
-jack.control <- makeJackControl(d = 3,B = 1e2)
-
-nvec.2 <- rep(NA, nsims)
-converged.2<- rep(NA, nsims)
-simlist.2 <- NULL
-for(i in 1:nsims){
-  simlist.2[[i]] <- Estimate.b.k(rds.object = simlist[[i]], type='leave-d-out', jack.control)
-  nvec.2[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
-  converged.2[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
-}
-
-hist(nvec.2)
-abline(v=sum(true.Nks), col='red') # True population size
-abline(v=median(nvec.2, na.rm = TRUE), lty=2) # delete-d median
-abline(v=median(nvec.1, na.rm = TRUE), lty=3) # MLE median
-
-
-
-
-
-jack.control <- makeJackControl(3, 1e2)
-rds.object.2 <- Estimate.b.k(rds.object, type='leave-d-out', jack.control = jack.control)
-
-estimate.2 <- rds.object.2$estimates$Nk.estimates
-table(estimate.2)
-sum(estimate.2)
-```
-
 ## Parametric smoothing
 ```{r}
-rds.object.3 <- Estimate.b.k(rds.object, type='parametric')
+nvec.3 <- rep(NA, nsims)
+converged.3<- rep(NA, nsims)
+simlist.3 <- NULL
+for(i in 1:nsims){
+  try({
+  simlist.3[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='parametric')
+  nvec.3[i] <- sum(simlist.3[[i]]$estimates$Nk.estimates)
+  converged.3[i] <- sum(simlist.3[[i]]$estimates$convergence, na.rm=TRUE)      
+  })
+}
 
-estimate.3 <- rds.object.3$estimates$Nk.estimates
-plot(estimate.3, type='h')
-table(estimate.3)
-sum(estimate.3[estimate.3<Inf])
+hist(nvec.3)
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.3, na.rm = TRUE), lty=2) # Median of estimated population size
 ```
 
 ## Integrated MLE
@@ -208,4 +187,25 @@ sum(estimate.6)
 ```
 
 
+## Observed
 
+
+
+## Delete-d 
+```{r}
+jack.control <- makeJackControl(d = 5e1, B = 2e2)
+
+nvec.2 <- rep(NA, nsims)
+converged.2<- rep(NA, nsims)
+simlist.2 <- NULL
+for(i in 1:nsims){
+  simlist.2[[i]] <- Estimate.b.k(rds.object = simlist.1[[i]], type='leave-d-out', jack.control)
+  nvec.2[i] <- sum(simlist.1[[i]]$estimates$Nk.estimates)
+  converged.2[i] <- sum(simlist.1[[i]]$estimates$convergence, na.rm=TRUE)
+}
+
+hist(nvec.2, xlim=c(5e2,4e3))
+abline(v=sum(true.Nks), col='red') # True population size
+abline(v=median(nvec.2, na.rm = TRUE), lty=2) # delete-d median
+abline(v=median(nvec.1, na.rm = TRUE), lty=3) # MLE median
+```

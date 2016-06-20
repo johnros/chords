@@ -38,7 +38,7 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
       stop('Initial estimates in the rds-objcet for this type of estimation.')
     }
     
-    imput.ind <- which(is.finite(result$log.bk.estimates) & !is.na(result$log.bk.estimates))# estimates to impute:
+    imput.ind <- which(!is.na(result$log.bk.estimates))# estimates to impute:
     result$Nk.estimates[imput.ind] <- thetaSmoothingNks(rds.object)
   }
   
@@ -74,9 +74,11 @@ Estimate.b.k<- function (rds.object, type='mle', jack.control=NULL) {
     ## Core
     jack.Nks <- matrix(NA, nrow=n.deletions, ncol=n.nks)
     for(i in 1:n.deletions){
-      deletion <- sample(N, d) # select arrivals to remove
-      .temp <- estimate.b.k(rds.object, delete.ind = deletion, type=type)
-      jack.Nks[i,] <- .temp$Nk.estimates[imput.ind]
+      try({
+        deletion <- sample(N, d) # select arrivals to remove
+        .temp <- estimate.b.k(rds.object, delete.ind = deletion, type=type)
+        jack.Nks[i,] <- .temp$Nk.estimates[imput.ind]
+      })
     }
     
     # Compute degree-wise median
@@ -178,7 +180,7 @@ estimate.b.k<- function (rds.object,
     B.ks[k] <- B.k
     n.k.counts[k] <- n.k.count
     
-    Nk.estimates[k]<-.temp$N.k
+    Nk.estimates[k]<- .temp$N.k
     log.bk.estiamtes[k] <- log(n.k.count) - log(.temp$N.k *  A.k - B.k)
   } # End looping over estimable degrees.  
   
