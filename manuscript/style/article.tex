@@ -121,6 +121,7 @@ Our task is to estimate $\hat{N}_1, \hat{N}_2,\dots$, based on a sample of $x_{t
 Denote $\lambda_{k,t}$, the probability of recruiting an individual with degree $k$ in the time interval $[t,t+\Delta]$.
 We assume the following generative multivariate counting model:
 \begin{align}
+\label{eq:model}
  \lambda_{k,t} =  \beta_k \frac{n_t}{N}  (N_k - n_{k,t}) \Delta t + \smallO(\Delta t),
 \end{align}
 where $\beta_k$ is some base recruitment rate, 
@@ -134,6 +135,13 @@ Equipped with this generative model, we may state the estimation of $\Ns$ as a l
 Moreover, we show in \cite{berchenko_modeling_2013} that the maximum likelihood estimator (MLE) of $\Ns$ is separable for the various $k$, and independent of $\beta_k$. 
 This fact is used by \citet{berchenko_modeling_2013} for proof of the asymptotic properties of $\hatNs$, and in the  \pkg{chords} package to accelerate the estimation task.
 
+MLEs for $\Ns$ in model (\ref{eq:model}) have an interesting finite sample property: They tend to return $\hat{N}_k=\infty$ with non null probabilities. 
+This clearly calls for some regularization. 
+The Bayesian framework, a celebrated regularization device, will not work in this problem. 
+Informally speaking, this is because any shrinkage of $\infty$ is still $\infty$. 
+In our package, we have implemented several regularization devices. Some very crude heuristics, and some less so. 
+In particular, we generalized the ideas of \cite{musa_estimating_1991} and \cite{osborne_inference_2000} to our multivariate case.
+The former proposing a jacknife-type resampling scheme, and the latter an \emph{integrated likelihood} approach.
 
 
 

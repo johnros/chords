@@ -2,51 +2,51 @@ This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: article.aux
 The style file: jss.bst
-Illegal, another \bibstyle command---line 25 of file article.aux
+Illegal, another \bibstyle command---line 30 of file article.aux
  : \bibstyle
  :          {abvnat}
 I'm skipping whatever remains of this command
 Database file #1: RDS.bib
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-You've used 6 entries,
+You've used 8 entries,
             3215 wiz_defined-function locations,
-            669 strings with 6192 characters,
-and the built_in function-call counts, 5408 in all, are:
-= -- 519
-> -- 120
-< -- 3
-+ -- 47
-- -- 40
-* -- 386
-:= -- 660
-add.period$ -- 25
-call.type$ -- 6
-change.case$ -- 37
-chr.to.int$ -- 7
-cite$ -- 6
-duplicate$ -- 570
-empty$ -- 444
-format.name$ -- 55
-if$ -- 1084
+            687 strings with 6615 characters,
+and the built_in function-call counts, 7290 in all, are:
+= -- 707
+> -- 158
+< -- 5
++ -- 61
+- -- 52
+* -- 529
+:= -- 889
+add.period$ -- 37
+call.type$ -- 8
+change.case$ -- 49
+chr.to.int$ -- 9
+cite$ -- 8
+duplicate$ -- 756
+empty$ -- 599
+format.name$ -- 77
+if$ -- 1467
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 61
-newline$ -- 42
-num.names$ -- 24
-pop$ -- 280
+missing$ -- 83
+newline$ -- 56
+num.names$ -- 32
+pop$ -- 359
 preamble$ -- 1
-purify$ -- 37
+purify$ -- 49
 quote$ -- 0
-skip$ -- 107
+skip$ -- 141
 stack$ -- 0
-substring$ -- 527
-swap$ -- 140
+substring$ -- 710
+swap$ -- 202
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 54
+type$ -- 72
 warning$ -- 0
-while$ -- 37
+while$ -- 51
 width$ -- 0
-write$ -- 87
+write$ -- 121
 (There was 1 error message)

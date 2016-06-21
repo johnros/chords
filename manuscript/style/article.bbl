@@ -1,4 +1,4 @@
-\begin{thebibliography}{6}
+\begin{thebibliography}{8}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -49,5 +49,22 @@ Horvitz DG, Thompson DJ (1952).
   finite universe.}
 \newblock \emph{Journal of the American Statistical Association},
   \textbf{47}(260), 663--685.
+
+\bibitem[{Musa and Iannino(1991)}]{musa_estimating_1991}
+Musa JD, Iannino A (1991).
+\newblock \enquote{Estimating the {{Total Number}} of {{Software Failures
+  Using}} an {{Exponential Model}}.}
+\newblock \emph{SIGSOFT Softw. Eng. Notes}, \textbf{16}(3), 80--84.
+\newblock ISSN 0163-5948.
+\newblock \doi{10.1145/127099.127123}.
+
+\bibitem[{Osborne and Severini(2000)}]{osborne_inference_2000}
+Osborne JA, Severini TA (2000).
+\newblock \enquote{Inference for {{Exponential Order Statistic Models Based}}
+  on an {{Integrated Likelihood Function}}.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{95}(452), 1220--1228.
+\newblock ISSN 0162-1459.
+\newblock \doi{10.1080/01621459.2000.10474322}.
 
 \end{thebibliography}
