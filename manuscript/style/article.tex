@@ -154,24 +154,30 @@ We start by demonstrating the workflow on some data supplied with the package.
 The data consists of [TODO: describe data].
 For more details, see \citet{salganik_assessing_2011}. 
 
-At a high-level, the flow consists of (a) casting the data into the RDS file format (\url{http://www.respondentdrivensampling.org/reports/RDSAT_7.1-Manual_2012-11-25.pdf}), 
+At a high-level, the work-flow has the same functional-object-oriented flavour as \pkg{ggplot2}:
+All the data required for the estimation is contained in the \code{rds-class} objects, and so are the results. 
+Like \pkg{ggplot2}, and unlike object-oriented, the estimation does not modify the object on which it operates. The output will thus be a new object, with the same data, and a new estimate. 
+
+A typical work-flow consists of:
+(a) casting the data into the RDS file format\footnote{Defined in \url{http://www.respondentdrivensampling.org/reports/RDSAT_7.1-Manual_2012-11-25.pdf}.}, 
 (b) initializing an \code{rds-class} object, 
 (c) compute initial estimator.
 (d) use a modified estimator to deal with infinite values. 
 
 
-\begin{CodeChunk}
-\begin{CodeInput}
-first input first line
-first input second line
-\end{CodeInput}
-\begin{CodeOutput}
-output of first input
-\end{CodeOutput}
-\begin{CodeInput}
-second input
-\end{CodeInput}
-\end{CodeChunk}
+
+%\begin{CodeChunk}
+%\begin{CodeInput}
+%first input first line
+%first input second line
+%\end{CodeInput}
+%\begin{CodeOutput}
+%output of first input
+%\end{CodeOutput}
+%\begin{CodeInput}
+%second input
+%\end{CodeInput}
+%\end{CodeChunk}
 
 
 
