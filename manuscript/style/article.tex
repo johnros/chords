@@ -73,6 +73,13 @@
 \newcommand{\Y}{\rv Y} % The random variable y
 \newcommand{\expect}[1]{\mathbf{E}\left[ #1 \right]} % The expectation operator
 \newcommand{\expectg}[2]{\mathbf{E}_{\rv{#1}}\left[ \rv{#2} \right]} % An expectation w.r.t. a particular random 
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bigOprob}{\mathcal{O}_P}
+\newcommand{\smallO}{o}
+\newcommand{\smallOprob}{o_P}
+\newcommand{\aka}{{a.k.a.\ }}
+\newcommand{\Aka}{{A.k.a.\ }}
+
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -104,13 +111,22 @@ Having assumed a generative process, we can now estimate degree frequencies, int
 The details of the assumed generative model can be found in \cite{berchenko_modeling_2013}, but the essentials are now detailed for completeness.
 
 Denote $N_k$ the unknown population frequency of degree $k$, i.e., the number of individuals with $k$ ``friends''. 
+Denote $N:=\sum_k N_k$, the total population size. 
 Denote by $x_t$ the degree of the respondent recruited at time $t$. 
 Our task is to estimate $\hat{N}_1, \hat{N}_2,\dots$, based on a sample of $x_{t_1},\dots, x_{t_\tau}$. 
-Denote $\lambda_{k,t}$, the probability of recruiting an individual with degree $k$ at time $t$. 
+Denote $\lambda_{k,t}$, the probability of recruiting an individual with degree $k$ in the time interval $[t,t+\Delta]$.
 We assume the following generative multivariate counting model:
 \begin{align}
-x
+ \lambda_{k,t} =  \beta_k \frac{n_t}{N}  (N_k - n_{k,t}) \Delta t + \smallO(\Delta t),
 \end{align}
+where $\beta_k$ is some base recruitment rate, 
+$n_t$ is the number of recruiting individuals at time $t$, 
+and $n_{k,t}:=\sum_{s\leq t} I_{\set{x_s=k}}$ the number of recruited individuals of degree $k$. 
+It thus follows that $\frac{I_t}{N}$ is the recruiting population proportion, and $(N_k - n_{k,t})$ the recruitment ``potential'' of degree $k$.
+In these terms, our model implies that the recruitment probability, in short enough time periods, is proportional to the recruiting team (\aka the ``snowball'') and the recruiting potential. 
+For more on this model, see \citep{berchenko_modeling_2013}.
+
+
 
 
 
