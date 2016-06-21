@@ -1,4 +1,4 @@
-\begin{thebibliography}{5}
+\begin{thebibliography}{6}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -8,6 +8,14 @@
   \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
   \urlstyle{rm}\Url}\fi
 \providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Berchenko \emph{et~al.}(2013)Berchenko, Rosenblatt, and
+  Frost}]{berchenko_modeling_2013}
+Berchenko Y, Rosenblatt J, Frost SDW (2013).
+\newblock \enquote{Modeling and {{Analysing Respondent Driven Sampling}} as a
+  {{Counting Process}}.}
+\newblock \emph{arXiv:1304.3505}.
+\newblock \eprint{1304.3505}.
 
 \bibitem[{Crawford \emph{et~al.}(2015)Crawford, Wu, and
   Heimer}]{crawford2015hidden}
