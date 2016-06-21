@@ -1,0 +1,14 @@
+[Session]
+FileVersion=1
+File0\FileName=article.tex
+File0\Line=6
+File0\Col=15
+File0\FirstLine=0
+File0\FoldedLines=
+MasterFile=
+CurrentFile=article.tex
+Bookmarks="@Variant(\0\0\0\t\0\0\0\x1\0\0\0\v\0\0\0\x4\0\0\0\x44\0.\0.\0/\0.\0.\0/\0.\0.\0/\0I\0S\0\x46\0/\0I\0S\0\x46\0_\0p\0\x65\0r\0s\0o\0n\0\x61\0l\0/\0m\0\x61\0i\0n\0.\0t\0\x65\0x\0\0\0\x4\0-\0\x31\0\0\0\x2\0\x31\0\0\0,\0m\0\x61\0i\0n\0.\0t\0\x65\0x\0\n\0\\\0\x66\0r\0\x61\0\x63\0{\0m\0-\0\x31\0}\0{\0m\0})"
+
+[InternalPDFViewer]
+File=../../../qualityEngineering/Class_notes/notes.pdf
+Embedded=false

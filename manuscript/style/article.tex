@@ -51,22 +51,43 @@
 %% for those who use Sweave please include the following line (with % symbols):
 %% need no \usepackage{Sweave.sty}
 
+\newcommand{\limprob}{\xrightarrow{P}}
+\newcommand{\limdist}{\xrightarrow{D}}
+\newcommand{\chords}{\textit{chords}}
+\newcommand{\gauss}[1]{\mathcal{N}\left(#1\right)}
+\newcommand{\naive}{na\"{\i}ve}
+\newcommand{\Naive}{Na\"{\i}ve}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+
+
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \begin{document}
-
 %% include your article here, just as usual
 %% Note that you should use the \pkg{}, \proglang{} and \code{} commands.
 
 \section{Introduction}
-%% Note: If there is markup in \(sub)section, then it has to be escape as above.
+
+As the name suggests, Respondent Driven Sampling (RDS) is a framework for sampling by chain-referral.
+RDS is a bundle of a sampling mechanism and analysis methods, most common in the study of marginalized populations which do not lend themselves to simple sampling \cite{heckathorn_respondent-driven_1997,heckathorn_respondent-driven_2002}. 
+
+In RDS seeds are selected -- usually by convenience -- from the target population, and given coupons. 
+They use these coupons to recruit others, who themselves become recruiters. 
+Recruits are given an incentive, usually money, for taking part in the survey, and also for recruiting others.
+This process continues in recruitment waves until the survey is stopped, usually when a target sample size is reached.
+
+With the above sampling mechanism, highly connected individuals will be overrepresented in the sample.
+If the attribute of interest is correlated with an individual's degree, as is often the case (e.g. HIV), a \naive
 
 \section{Work Flow}
 
+
 \section{Some Technicalities}
 
+
 \section{Conclusion}
+
 
 \section{Future Work}
 
