@@ -107,7 +107,7 @@ With the above sampling mechanism, highly connected individuals will be overrepr
 If the attribute of interest is correlated with an individual's degree, as is often the case (e.g. HIV), \naive estimates will be biased towards the state of the highly connected subgroups.
 An unbiased Horowitz-Thompson-type estimator \citep{horvitz_generalization_1952} would require the knowledge of frequency of each degree. 
 Clearly, the frequency of each degree will also be biased towards higher degrees, and thus cannot be recovered from the knowledge of individuals' degrees alone. 
-The common remedy to this matter is the inverse-degree weighting heuristic \citep{crawford2015hidden,guntuboyina2012impossibility}.
+The common remedy to this matter is the inverse-degree weighting heuristic \citep{crawford_hidden_2015,guntuboyina_impossibility_2012}.
 
 In \cite{berchenko_modeling_2013} we proposed a generative model for RDS.
 The model is based on the idea that RDS spreads like an epidemic, and we can thus borrow epidemiological generative models. In particular SIR [TODO: add citation], for likelihood based inference.
@@ -165,11 +165,12 @@ A typical work-flow consists of:
 (d) use a modified estimator to deal with infinite values. 
 
 
-
 %\begin{CodeChunk}
 %\begin{CodeInput}
-%first input first line
-%first input second line
+%R> library(magrittr)
+%R> library(chords)
+%R> data(brazil)
+%R> head(brazil)
 %\end{CodeInput}
 %\begin{CodeOutput}
 %output of first input

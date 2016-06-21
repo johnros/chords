@@ -1,4 +1,4 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{9}
 \newcommand{\enquote}[1]{``#1''}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
@@ -16,6 +16,20 @@ Berchenko Y, Rosenblatt J, Frost SDW (2013).
   {{Counting Process}}.}
 \newblock \emph{arXiv:1304.3505}.
 \newblock \eprint{1304.3505}.
+
+\bibitem[{Crawford \emph{et~al.}(2015)Crawford, Wu, and
+  Heimer}]{crawford_hidden_2015}
+Crawford FW, Wu J, Heimer R (2015).
+\newblock \enquote{Hidden population size estimation from respondent-driven
+  sampling: a network approach.}
+\newblock \emph{arXiv preprint}.
+
+\bibitem[{Guntuboyina \emph{et~al.}(2012)Guntuboyina, Barbour, and
+  Heimer}]{guntuboyina_impossibility_2012}
+Guntuboyina A, Barbour R, Heimer R (2012).
+\newblock \enquote{On the impossibility of constructing good population mean
+  estimators in a realistic {{Respondent Driven Sampling}} model.}
+\newblock \emph{arXiv preprint}.
 
 \bibitem[{Heckathorn(1997)}]{heckathorn_respondent-driven_1997}
 Heckathorn D (1997).
