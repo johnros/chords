@@ -53,6 +53,7 @@
 
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{natbib}
+\usepackage{url}
 
 
 % General purposes commands
@@ -152,6 +153,11 @@ The usage of the package, the MLE estimator, and the small-sample modifications,
 We start by demonstrating the workflow on some data supplied with the package. 
 The data consists of [TODO: describe data].
 For more details, see \citet{salganik_assessing_2011}. 
+
+At a high-level, the flow consists of (a) casting the data into the RDS file format (\url{http://www.respondentdrivensampling.org/reports/RDSAT_7.1-Manual_2012-11-25.pdf}), 
+(b) initializing an \code{rds-class} object, 
+(c) compute initial estimator.
+(d) use a modified estimator to deal with infinite values. 
 
 
 \begin{CodeChunk}
