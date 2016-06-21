@@ -82,6 +82,7 @@
 
 % Paper specific commands:
 \newcommand{\Ns}{N_1,N_2,\dots}
+\newcommand{\hatNs}{\hat{N}_1, \hat{N}_2,\dots}
 
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -129,7 +130,9 @@ It thus follows that $\frac{I_t}{N}$ is the recruiting population proportion, an
 In these terms, our model implies that the recruitment probability, in short enough time periods, is proportional to the recruiting team (\aka the ``snowball'') and the recruiting potential. 
 For more on this model, and relations to other existing models, see \citet{berchenko_modeling_2013}.
 
-Equipped with this generative model, we may state the estimation of $\Ns$ as a likelihood problem. 
+Equipped with this generative model, we may state the estimation of $\Ns$ as a likelihood maximization problem. 
+Moreover, we show in \cite{berchenko_modeling_2013} that the maximum likelihood estimator (MLE) of $\Ns$ is separable for the various $k$, and independent of $\beta_k$. 
+This fact is used by \citet{berchenko_modeling_2013} for proof of the asymptotic properties of $\hatNs$, and in the  \pkg{chords} package to accelerate the estimation task.
 
 
 
