@@ -58,7 +58,16 @@
 \newcommand{\naive}{na\"{\i}ve}
 \newcommand{\Naive}{Na\"{\i}ve}
 \newcommand{\set}[1]{\left\{ #1 \right\}}
-
+\newcommand{\setII}[1]{\left\{ #1 \right\}} % A set
+\newcommand{\rv}[1]{\mathbf{#1}} % A random variable
+\newcommand{\x}{\rv x} % The random variable x 
+\newcommand{\y}{\rv y} % The random variable x 
+\newcommand{\U}{\rv u} % The random variable x 
+\newcommand{\T}{\rv t} % The random variable x 
+\newcommand{\X}{\rv X} % The random variable x 
+\newcommand{\Y}{\rv Y} % The random variable y
+\newcommand{\expect}[1]{\mathbf{E}\left[ #1 \right]} % The expectation operator
+\newcommand{\expectg}[2]{\mathbf{E}_{\rv{#1}}\left[ \rv{#2} \right]} % An expectation w.r.t. a particular random 
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,6 +97,14 @@ The model is based on the idea that RDS spreads like an epidemic, and we can thu
 Having assumed a generative process, we can now estimate degree frequencies, introduce covariates, check the goodness of fit, and discuss the model's assumptions. 
 
 The details of the assumed generative model can be found in \cite{berchenko_modeling_2013}, but the essentials are now detailed for completeness.
+
+Denote $N_k$ the unknown population frequency of degree $k$, i.e., the number of individuals with $k$ ``friends''. 
+Denote by $x_t$ the degree of the respondent recruited at time $t$. 
+Our task is to estimate $\hat{N}_1, \hat{N}_2,\dots$, based on a sample of $x_{t_1},\dots, x_{t_\tau}$. 
+Denote $\lambda_{k,t}$, the probability of recruiting an individual with degree $k$ at time $t$. 
+We assume the following generative multivariate counting model.
+
+
 
 
 \section{Work Flow}
