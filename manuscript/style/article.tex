@@ -70,7 +70,7 @@
 \section{Introduction}
 
 As the name suggests, Respondent Driven Sampling (RDS) is a framework for sampling by chain-referral.
-RDS is a bundle of a sampling mechanism and analysis methods, most common in the study of marginalized populations which do not lend themselves to simple sampling \cite{heckathorn_respondent-driven_1997,heckathorn_respondent-driven_2002}. 
+RDS is a bundle of a sampling mechanism and analysis methods, most common in the study of marginalized populations which do not lend themselves to simple sampling \citep{heckathorn_respondent-driven_1997,heckathorn_respondent-driven_2002}. 
 
 In RDS seeds are selected -- usually by convenience -- from the target population, and given coupons. 
 They use these coupons to recruit others, who themselves become recruiters. 
@@ -78,7 +78,10 @@ Recruits are given an incentive, usually money, for taking part in the survey, a
 This process continues in recruitment waves until the survey is stopped, usually when a target sample size is reached.
 
 With the above sampling mechanism, highly connected individuals will be overrepresented in the sample.
-If the attribute of interest is correlated with an individual's degree, as is often the case (e.g. HIV), a \naive
+If the attribute of interest is correlated with an individual's degree, as is often the case (e.g. HIV), \naive estimates will be biased towards the state of the highly connected subgroups.
+An unbiased Horowitz-Thompson-type estimator \citep{horvitz_generalization_1952} would require the knowledge of frequency of each degree. 
+Clearly, the frequency of each degree will also be biased towards higher degrees, and thus cannot be recovered from the knowledge of individuals' degrees. 
+A common 
 
 \section{Work Flow}
 
