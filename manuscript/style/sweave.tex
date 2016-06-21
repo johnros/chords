@@ -1,0 +1,233 @@
+\documentclass[article]{jss}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% almost as usual
+\author{Jonathan D. Rosenblatt\\Ben Gurion University \And 
+        Yakir Berchenko\\ Gertner Institute for \\ Epidemiology and \\ Health Policy Research \And
+        Simon D. Frost\\ Cambridge University}
+\title{The \pkg{chords} \proglang{R} Package- A Principled Approach to Respondent Driven Sampling}
+
+%% for pretty printing and a nice hypersummary also set:
+\Plainauthor{Jonathan D. Rosenblatt, Yakir Berchenko, Simon D. Frost} %% comma-separated
+\Plaintitle{The chords R Package- A Principled Approach to Respondent Driven Sampling} %% without formatting
+\Shorttitle{\pkg{chords} for Respondent Driven Sampling} %% a short title (if necessary)
+
+%% an abstract and keywords
+\Abstract{
+  The abstract of the article.
+}
+\Keywords{RDS, estimation, counting-process, \proglang{R}}
+\Plainkeywords{RDS, estimation, counting-process, R} %% without formatting
+%% at least one keyword must be supplied
+
+%% publication information
+%% NOTE: Typically, this can be left commented and will be filled out by the technical editor
+%% \Volume{50}
+%% \Issue{9}
+%% \Month{June}
+%% \Year{2012}
+%% \Submitdate{2012-06-04}
+%% \Acceptdate{2012-06-04}
+
+%% The address of (at least) one author should be given
+%% in the following format:
+\Address{
+  Jonathan D. Rosenblatt\\
+  Department of Industrial Engineering and Management\\
+  Faculty of Engineering\\
+  Ben Gurion University of the Negev\\
+  P.O. 653, Beer Sheva, 8410501\\
+  E-mail: \email{johnros@bgu.ac.il}\\
+  URL: \url{http://www.john-ros.com/}
+}
+%% It is also possible to add a telephone and fax number
+%% before the e-mail in the following format:
+%% Telephone: +43/512/507-7103
+%% Fax: +43/512/507-2851
+
+%% for those who use Sweave please include the following line (with % symbols):
+%% need no \usepackage{Sweave.sty}
+
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{natbib}
+\usepackage{url}
+
+
+% General purposes commands
+\newcommand{\limprob}{\xrightarrow{P}}
+\newcommand{\limdist}{\xrightarrow{D}}
+\newcommand{\chords}{\textit{chords}}
+\newcommand{\gauss}[1]{\mathcal{N}\left(#1\right)}
+\newcommand{\naive}{na\"{\i}ve}
+\newcommand{\Naive}{Na\"{\i}ve}
+\newcommand{\set}[1]{\left\{ #1 \right\}}
+\newcommand{\setII}[1]{\left\{ #1 \right\}} % A set
+\newcommand{\rv}[1]{\mathbf{#1}} % A random variable
+\newcommand{\x}{\rv x} % The random variable x 
+\newcommand{\y}{\rv y} % The random variable x 
+\newcommand{\U}{\rv u} % The random variable x 
+\newcommand{\T}{\rv t} % The random variable x 
+\newcommand{\X}{\rv X} % The random variable x 
+\newcommand{\Y}{\rv Y} % The random variable y
+\newcommand{\expect}[1]{\mathbf{E}\left[ #1 \right]} % The expectation operator
+\newcommand{\expectg}[2]{\mathbf{E}_{\rv{#1}}\left[ \rv{#2} \right]} % An expectation w.r.t. a particular random 
+\newcommand{\bigO}{\mathcal{O}}
+\newcommand{\bigOprob}{\mathcal{O}_P}
+\newcommand{\smallO}{o}
+\newcommand{\smallOprob}{o_P}
+\newcommand{\aka}{{a.k.a.\ }}
+\newcommand{\Aka}{{A.k.a.\ }}
+
+% Paper specific commands:
+\newcommand{\Ns}{N_1,N_2,\dots}
+\newcommand{\hatNs}{\hat{N}_1, \hat{N}_2,\dots}
+
+
+%% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+%% include your article here, just as usual
+%% Note that you should use the \pkg{}, \proglang{} and \code{} commands.
+
+\section{Introduction}
+
+As the name suggests, Respondent Driven Sampling (RDS) is a framework for sampling by chain-referral.
+RDS is a bundle of a sampling mechanism and analysis methods, most common in the study of marginalized populations which do not lend themselves to simple sampling \citep{heckathorn_respondent-driven_1997,heckathorn_respondent-driven_2002}. 
+
+In RDS seeds are selected -- usually by convenience -- from the target population, and given coupons. 
+They use these coupons to recruit others, who themselves become recruiters. 
+Recruits are given an incentive, usually money, for taking part in the survey, and also for recruiting others.
+This process continues in recruitment waves until the survey is stopped, usually when a target sample size is reached.
+
+With the above sampling mechanism, highly connected individuals will be overrepresented in the sample.
+If the attribute of interest is correlated with an individual's degree, as is often the case (e.g. HIV), \naive estimates will be biased towards the state of the highly connected subgroups.
+An unbiased Horowitz-Thompson-type estimator \citep{horvitz_generalization_1952} would require the knowledge of frequency of each degree. 
+Clearly, the frequency of each degree will also be biased towards higher degrees, and thus cannot be recovered from the knowledge of individuals' degrees alone. 
+The common remedy to this matter is the inverse-degree weighting heuristic \citep{crawford_hidden_2015,guntuboyina_impossibility_2012}.
+
+In \cite{berchenko_modeling_2013} we proposed a generative model for RDS.
+The model is based on the idea that RDS spreads like an epidemic, and we can thus borrow epidemiological generative models. In particular SIR [TODO: add citation], for likelihood based inference.
+Having assumed a generative process, we can now estimate degree frequencies, introduce covariates, check the goodness of fit, and discuss the model's assumptions. 
+
+The details of the assumed generative model can be found in \cite{berchenko_modeling_2013}, but the essentials are now detailed for completeness.
+
+Denote $N_k$ the unknown population frequency of degree $k$, i.e., the number of individuals with $k$ ``friends''. 
+Denote $N:=\sum_k N_k$, the total population size. 
+Denote by $x_t$ the degree of the respondent recruited at time $t$. 
+Our task is to estimate $\hat{N}_1, \hat{N}_2,\dots$, based on a sample of $x_{t_1},\dots, x_{t_\tau}$. 
+Denote $\lambda_{k,t}$, the probability of recruiting an individual with degree $k$ in the time interval $[t,t+\Delta]$.
+We assume the following generative multivariate counting model:
+\begin{align}
+\label{eq:model}
+ \lambda_{k,t} =  \beta_k \frac{n_t}{N}  (N_k - n_{k,t}) \Delta t + \smallO(\Delta t),
+\end{align}
+where $\beta_k$ is some base recruitment rate, 
+$n_t$ is the number of recruiting individuals at time $t$, 
+and $n_{k,t}:=\sum_{s\leq t} I_{\set{x_s=k}}$ the number of recruited individuals of degree $k$. 
+It thus follows that $\frac{I_t}{N}$ is the recruiting population proportion, and $(N_k - n_{k,t})$ the recruitment ``potential'' of degree $k$.
+In these terms, our model implies that the recruitment probability, in short enough time periods, is proportional to the recruiting team (\aka the ``snowball'') and the recruiting potential. 
+For more on this model, and relations to other existing models, see \citet{berchenko_modeling_2013}.
+
+Equipped with this generative model, we may state the estimation of $\Ns$ as a likelihood maximization problem. 
+Moreover, we show in \cite{berchenko_modeling_2013} that the maximum likelihood estimator (MLE) of $\Ns$ is separable for the various $k$, and independent of $\beta_k$. 
+This fact is used by \citet{berchenko_modeling_2013} for proof of the asymptotic properties of $\hatNs$, and in the  \pkg{chords} package to accelerate the estimation task.
+
+MLEs for $\Ns$ in model (\ref{eq:model}) have an interesting finite sample property: They tend to return $\hat{N}_k=\infty$ with non null probabilities. 
+This clearly calls for some regularization. 
+The Bayesian framework, a celebrated regularization device, will not work in this problem. 
+Informally speaking, this is because any shrinkage of $\infty$ is still $\infty$. 
+In our package, we have implemented several regularization devices. Some very crude heuristics, and some less so. 
+In particular, we generalized the ideas of \cite{musa_estimating_1991} and \cite{osborne_inference_2000} to our multivariate case.
+The former proposing a jacknife-type resampling scheme, and the latter an \emph{integrated likelihood} approach.
+
+The usage of the package, the MLE estimator, and the small-sample modifications, is demonstrated in the next section.
+
+
+
+\section{Work Flow}
+
+We start by demonstrating the workflow on some data supplied with the package. 
+The data consists of [TODO: describe data].
+For more details, see \citet{salganik_assessing_2011}. 
+
+At a high-level, the work-flow has the same functional-object-oriented flavour as \pkg{ggplot2}:
+All the data required for the estimation is contained in the \code{rds-class} objects, and so are the results. 
+Like \pkg{ggplot2}, and unlike object-oriented, the estimation does not modify the object on which it operates. The output will thus be a new object, with the same data, and a new estimate. 
+
+A typical work-flow consists of:
+(a) casting the data into the RDS file format,
+(b) initializing an \code{rds-class} object, 
+(c) compute initial estimator.
+(d) use a modified estimator to deal with infinite values. 
+
+We start by simulating $10$ RDS samples.
+The population consists of $4$ observed degree classes $(2,5,10,20)$, with $1,000$ individuals per degree. 
+Formally, $N_k=1,000$ for $k=2,5,10,20$, so that $N=4,000$.
+
+\begin{Schunk}
+\begin{Sinput}
+R> library(magrittr)
+R> library(chords)
+R> dk <- c(2, 5, 10, 20) # four degree classes
+R> true.dks <- rep(0,max(dk))
+R> true.dks[dk] <- dk
+R> true.Nks <- rep(0,max(dk))
+R> true.Nks[dk] <- 1e3 
+R> beta <- 1
+R> theta <-  0.1
+R> true.log.bks <- rep(-Inf, max(dk))
+R> true.log.bks[dk] <- theta*log(beta*dk)
+R> sample.length <- 1e3 # the total sample size
+R> nsims <- 1e1
+R> simlist <- list()
+R> for(i in 1:nsims){
++   simlist[[i]] <- makeRdsSample(
++     N.k =true.Nks , 
++     b.k = exp(true.log.bks),
++     sample.length = sample.length)
++ }
+\end{Sinput}
+\end{Schunk}
+
+The file format adheres to the RDS conventions as described in \url{http://www.respondentdrivensampling.org/reports/RDSAT_7.1-Manual_2012-11-25.pdf}.
+In particular note the \code{NS1} variable which encodes the (self reported) degree of each recruitee, 
+\code{refCoupNum} for the recruiter's coupon number, 
+\code{coup1}-\code{coup3} for the coupons given upon recruitment, 
+and \code{interviewDt} for the time of recruitment. 
+The scale of \code{interviewDt} is immaterial since the initial time will be later subtracted, and any rescaling will merely change the time units of the baseline recruitment rate $\beta_k$. 
+We now ready to call the \code{rds-object} constructor:
+\begin{Schunk}
+\begin{Sinput}
+R> #rds.object<- initializeRdsObject(brazil)
+\end{Sinput}
+\end{Schunk}
+\code{rds.object} will now hold all the information needed for the estimation, and an empty slot for future estimates. 
+The default maximum likelihood estimates are now computed:
+\begin{Schunk}
+\begin{Sinput}
+R> #rds.object <- Estimate.b.k(rds.object = rds.object)
+\end{Sinput}
+\end{Schunk}
+
+
+
+
+
+\section{Some Technicalities}
+
+
+\section{Conclusion}
+
+
+\section{Future Work}
+
+
+\bibliographystyle{abbrvnat}
+\bibliography{RDS}
+
+
+\end{document}

@@ -1,0 +1,80 @@
+\begin{thebibliography}{9}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Berchenko \emph{et~al.}(2013)Berchenko, Rosenblatt, and
+  Frost}]{berchenko_modeling_2013}
+Berchenko Y, Rosenblatt J, Frost SDW (2013).
+\newblock \enquote{Modeling and {{Analysing Respondent Driven Sampling}} as a
+  {{Counting Process}}.}
+\newblock \emph{arXiv:1304.3505}.
+\newblock \eprint{1304.3505}.
+
+\bibitem[{Crawford \emph{et~al.}(2015)Crawford, Wu, and
+  Heimer}]{crawford_hidden_2015}
+Crawford FW, Wu J, Heimer R (2015).
+\newblock \enquote{Hidden population size estimation from respondent-driven
+  sampling: a network approach.}
+\newblock \emph{arXiv preprint}.
+
+\bibitem[{Guntuboyina \emph{et~al.}(2012)Guntuboyina, Barbour, and
+  Heimer}]{guntuboyina_impossibility_2012}
+Guntuboyina A, Barbour R, Heimer R (2012).
+\newblock \enquote{On the impossibility of constructing good population mean
+  estimators in a realistic {{Respondent Driven Sampling}} model.}
+\newblock \emph{arXiv preprint}.
+
+\bibitem[{Heckathorn(1997)}]{heckathorn_respondent-driven_1997}
+Heckathorn D (1997).
+\newblock \enquote{Respondent-driven sampling: a new approach to the study of
+  hidden populations.}
+\newblock \emph{Social Problems}, \textbf{44}(2), 174--199.
+
+\bibitem[{Heckathorn(2002)}]{heckathorn_respondent-driven_2002}
+Heckathorn D (2002).
+\newblock \enquote{Respondent-driven sampling {{II}}: deriving valid population
+  estimates from chain-referral samples of hidden populations.}
+\newblock \emph{Social Problems}, \textbf{49}(1), 11--34.
+
+\bibitem[{Horvitz and Thompson(1952)}]{horvitz_generalization_1952}
+Horvitz DG, Thompson DJ (1952).
+\newblock \enquote{A generalization of sampling without replacement from a
+  finite universe.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{47}(260), 663--685.
+
+\bibitem[{Musa and Iannino(1991)}]{musa_estimating_1991}
+Musa JD, Iannino A (1991).
+\newblock \enquote{Estimating the {{Total Number}} of {{Software Failures
+  Using}} an {{Exponential Model}}.}
+\newblock \emph{SIGSOFT Softw. Eng. Notes}, \textbf{16}(3), 80--84.
+\newblock ISSN 0163-5948.
+\newblock \doi{10.1145/127099.127123}.
+
+\bibitem[{Osborne and Severini(2000)}]{osborne_inference_2000}
+Osborne JA, Severini TA (2000).
+\newblock \enquote{Inference for {{Exponential Order Statistic Models Based}}
+  on an {{Integrated Likelihood Function}}.}
+\newblock \emph{Journal of the American Statistical Association},
+  \textbf{95}(452), 1220--1228.
+\newblock ISSN 0162-1459.
+\newblock \doi{10.1080/01621459.2000.10474322}.
+
+\bibitem[{Salganik \emph{et~al.}(2011)Salganik, Fazito, Bertoni, Abdo, Mello,
+  and Bastos}]{salganik_assessing_2011}
+Salganik MJ, Fazito D, Bertoni N, Abdo AH, Mello MB, Bastos FI (2011).
+\newblock \enquote{Assessing {{Network Scale}}-up {{Estimates}} for {{Groups
+  Most}} at {{Risk}} of {{HIV}}/{{AIDS}}: {{Evidence From}} a {{Multiple-Method
+  Study}} of {{Heavy Drug Users}} in {{Curitiba}}, {{Brazil}}.}
+\newblock \emph{American Journal of Epidemiology}, \textbf{174}(10),
+  1190--1196.
+\newblock \doi{10.1093/aje/kwr246}.
+
+\end{thebibliography}
