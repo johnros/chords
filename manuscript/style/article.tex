@@ -55,7 +55,7 @@
 \usepackage{natbib}
 
 
-
+% General purposes commands
 \newcommand{\limprob}{\xrightarrow{P}}
 \newcommand{\limdist}{\xrightarrow{D}}
 \newcommand{\chords}{\textit{chords}}
@@ -79,6 +79,9 @@
 \newcommand{\smallOprob}{o_P}
 \newcommand{\aka}{{a.k.a.\ }}
 \newcommand{\Aka}{{A.k.a.\ }}
+
+% Paper specific commands:
+\newcommand{\Ns}{N_1,N_2,\dots}
 
 
 %% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -124,8 +127,9 @@ $n_t$ is the number of recruiting individuals at time $t$,
 and $n_{k,t}:=\sum_{s\leq t} I_{\set{x_s=k}}$ the number of recruited individuals of degree $k$. 
 It thus follows that $\frac{I_t}{N}$ is the recruiting population proportion, and $(N_k - n_{k,t})$ the recruitment ``potential'' of degree $k$.
 In these terms, our model implies that the recruitment probability, in short enough time periods, is proportional to the recruiting team (\aka the ``snowball'') and the recruiting potential. 
-For more on this model, see \citep{berchenko_modeling_2013}.
+For more on this model, and relations to other existing models, see \citet{berchenko_modeling_2013}.
 
+Equipped with this generative model, we may state the estimation of $\Ns$ as a likelihood problem. 
 
 
 
